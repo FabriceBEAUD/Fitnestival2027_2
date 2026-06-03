@@ -785,6 +785,36 @@
 <script>
   const chatHistory = [];
 
+  // Fallback local KB (utilisé si /api/chat n'est pas disponible)
+  const KB = {
+    tarif:      `Les pass disponibles :\n• **Pass Matin** (7h30→14h45) : 25€\n• **Pass Journée** (toute la journée) : 49€ ⭐\n• **Pass Après-midi/Soir** (dès 12h30) : 29€\n• **Pass Visiteur** : 5€\n\nRéservation sur HelloAsso 🎟️`,
+    lieu:       `📍 Le festival se tient à **Férin, dans le Nord (59)**.\nAccueil dès **9h00** le samedi 22 mai 2027.`,
+    date:       `📅 C'est le **Samedi 22 mai 2027** à Férin, Nord (59). Accueil dès 9h00 !`,
+    activite:   `3 zones d'activités :\n💜 **Fit'Zone** : Dance Party, Cardio Combat, HIIT, Body Attack, Total Body, HYROX…\n🟠 **Air'Zone** : Bootcamp, Challenge Équipe, Renfo Training\n🔵 **Flow'Zone** : Yoga, Méditation, Pilates, Stretching\n15 activités au total, accessibles à tous les niveaux !`,
+    bodyattack: `**Body Attack**, c'est un cours de fitness cardio-dynamique à haute intensité sur musique ! On enchaîne des sauts, sprints, squats et pompes dans une ambiance de folie. C'est ultra efficace pour brûler des calories et se défouler. Au FiTN'ESTiVAL, c'est proposé en Fit'Zone 💜`,
+    hiit:       `**HIIT** (High Intensity Interval Training) = alternance de phases d'effort intense et de récupération courte. En 30-45 min, tu brûles autant qu'en 1h de cardio classique. Au FiTN'ESTiVAL, le HIIT Cardio est proposé en Fit'Zone !`,
+    yoga:       `On propose **Hatha Yoga** (postures lentes, respiration, équilibre) et **Vinyasa Yoga** (flow dynamique, enchaînements fluides) en Flow'Zone. Parfait pour récupérer entre deux sessions cardio 🧘`,
+    reserver:   `Réservation via **HelloAsso** ! Retrouve la page FiTN'ESTiVAL sur helloasso.com ou contacte-nous à fitnestival@gmail.com 🎟️`,
+    contact:    `Contacte **Marie Beaud'huin** :\n📧 fitnestival@gmail.com\n📸 @fitnestival (Instagram)\n👥 @fitnestival2 (Facebook)\n🎵 @fitnestival2 (TikTok)`,
+    programme:  `Le programme détaillé sera annoncé prochainement ! 📅\nSuis-nous sur **@fitnestival** pour ne rien manquer.`,
+    default:    `Je suis Marie, ton assistante FiTN'ESTiVAL 2027 ! Tu peux me demander les **tarifs**, les **activités**, le **lieu**, comment **réserver** ou nous **contacter** 💜`,
+  };
+
+  function localReply(q) {
+    q = q.toLowerCase();
+    if (/body.?attack/.test(q)) return KB.bodyattack;
+    if (/hiit/.test(q)) return KB.hiit;
+    if (/yoga|pilates|méditation|stretching|flow/.test(q)) return KB.yoga;
+    if (/tarif|prix|pass|coût|combien/.test(q)) return KB.tarif;
+    if (/où|lieu|adresse|férin|location/.test(q)) return KB.lieu;
+    if (/date|quand|mai|2027/.test(q)) return KB.date;
+    if (/activit|sport|cours|zone|fit|air|dance|cardio|hyrox|bootcamp/.test(q)) return KB.activite;
+    if (/réserv|acheter|billet|helloasso|inscription/.test(q)) return KB.reserver;
+    if (/contact|email|marie|instagram|facebook/.test(q)) return KB.contact;
+    if (/programme|horaire|planning/.test(q)) return KB.programme;
+    return KB.default;
+  }
+
   function toggleMarie() {
     const b = document.getElementById('marie-bubble');
     b.classList.toggle('open');
@@ -803,14 +833,18 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ messages: chatHistory }),
       });
+      if (!res.ok) throw new Error('api_unavailable');
       const data = await res.json();
-      const reply = data.reply || 'Désolée, je n\'ai pas pu répondre. 💜';
+      const reply = data.reply || localReply(text);
       chatHistory.push({ role: 'assistant', content: reply });
       removeTyping();
       addMsg(reply, 'bot');
     } catch (e) {
+      // Fallback local quand l'API n'est pas disponible (dev local)
+      const reply = localReply(text);
+      chatHistory.push({ role: 'assistant', content: reply });
       removeTyping();
-      addMsg('Oups, une erreur s\'est produite. Réessaie dans un instant 💜', 'bot');
+      addMsg(reply, 'bot');
     }
   }
 
