@@ -317,21 +317,22 @@
       margin: 0; color: var(--white);
       display: flex; align-items: center; gap: .6rem;
     }
-    /* Fix édition #2 -> #3 sur photo Ysabeau */
+    /* Fix édition #2 -> #3 sur affiche hero */
     .edition-fix {
       position: absolute;
-      bottom: 31%; right: 6%;
-      width: 22px;
-      background: #6b21c8;
+      bottom: 28%; right: 3.5%;
+      width: 20px;
+      background: #5a1fa0;
       color: #fff;
       font-family: 'Bebas Neue', sans-serif;
-      font-size: .95rem;
-      letter-spacing: .05em;
+      font-size: .9rem;
+      letter-spacing: .03em;
       writing-mode: vertical-rl;
       text-orientation: mixed;
       transform: rotate(180deg);
-      padding: 2px 3px;
+      padding: 2px 2px;
       pointer-events: none;
+      border-radius: 2px;
     }
     .coach-orga {
       font-family: Montserrat, sans-serif;
@@ -656,8 +657,9 @@
         <a href="#activites" class="btn btn-secondary">Découvrir les activités</a>
       </div>
     </div>
-    <div class="hero-card">
+    <div class="hero-card" style="position:relative;">
       <img src="img/affiche_fitn_estival_2027.jpg" alt="Affiche FiTN'ESTiVAL 2027" />
+      <div class="edition-fix">#3</div>
     </div>
   </div>
 </section>
@@ -1031,7 +1033,6 @@
       <div class="coach-card reveal" style="transition-delay:.16s">
         <div class="coach-img-wrap">
           <img src="img/Coach/YSABEAU.jpg" alt="Ysabeau" style="object-position: center center;" />
-          <div class="edition-fix">#3</div>
           <div class="coach-tags"><span>Hargne</span><span>Rigueur</span><span>Authenticité</span></div>
         </div>
         <div class="coach-info">
