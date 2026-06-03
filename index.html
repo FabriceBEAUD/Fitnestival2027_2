@@ -1074,9 +1074,11 @@
     <div class="msg bot">Bonjour ! 👋 Je suis <strong>Marie</strong>, l'organisatrice de FiTN'ESTiVAL 2027.<br/>Comment puis-je t'aider ?</div>
   </div>
   <div class="marie-suggestions">
-    <button class="sugg-btn" onclick="askMarie('Les tarifs ?')">💰 Les tarifs ?</button>
-    <button class="sugg-btn" onclick="askMarie('C\'est où ?')">📍 C'est où ?</button>
-    <button class="sugg-btn" onclick="askMarie('Les activités ?')">🏃 Les activités ?</button>
+    <button class="sugg-btn" onclick="askMarie('Comment me préparer pour le festival ?')">💪 Se préparer</button>
+    <button class="sugg-btn" onclick="askMarie('C\'est quoi Happy Move Goeulzin ?')">🏋️ Happy Move</button>
+    <button class="sugg-btn" onclick="askMarie('Les tarifs ?')">💰 Tarifs</button>
+    <button class="sugg-btn" onclick="askMarie('Quoi amener le jour J ?')">🎒 Quoi amener ?</button>
+    <button class="sugg-btn" onclick="askMarie('Les activités ?')">🏃 Activités</button>
     <button class="sugg-btn" onclick="askMarie('Comment réserver ?')">🎟️ Réserver</button>
   </div>
   <div class="marie-input-row">
@@ -1100,11 +1102,21 @@
     reserver:   `Réservation via **HelloAsso** ! Retrouve la page FiTN'ESTiVAL sur helloasso.com ou contacte-nous à fitnestival@gmail.com 🎟️`,
     contact:    `Contacte **Marie Beaud'huin** :\n📧 fitnestival@gmail.com\n📸 @fitnestival (Instagram)\n👥 @fitnestival2 (Facebook)\n🎵 @fitnestival2 (TikTok)`,
     programme:  `Le programme détaillé sera annoncé prochainement ! 📅\nSuis-nous sur **@fitnestival** pour ne rien manquer.`,
-    default:    `Je suis **Marie**, l'organisatrice de FiTN'ESTiVAL 2027 ! Tu peux me demander les **tarifs**, les **activités**, le **lieu**, comment **réserver** ou nous **contacter** 💜`,
+    preparer:   `La meilleure façon de se préparer ? Viens t'entraîner à **Happy Move**, mon association à **Goeulzin (59)** ! J'y anime des cours de fitness : cardio, danse, renforcement — exactement le style du festival 💜\n\nLe jour J, pense à amener :\n• 👟 Chaussures cross-training\n• 👕 Plusieurs tenues de sport\n• 🧴 Crème solaire (activités outdoor)\n• 💧 Gourde\n• 💪 De l'énergie !\n\nContact Happy Move : **fitnestival@gmail.com** ou **@fitnestival** sur Instagram.`,
+    happymove:  `**Happy Move**, c'est mon association sportive à **Goeulzin, Nord (59)** ! J'y donne des cours de fitness accessibles à tous : cardio, danse fitness, renforcement musculaire.\n\nC'est l'endroit parfait pour se mettre en forme avant le festival 🏋️\nContact : **fitnestival@gmail.com** ou **@fitnestival** sur Instagram.`,
+    amener:     `Pour le jour J, pense à amener :\n• 👟 Chaussures de cross-training\n• 👕 Tenue de sport (plusieurs changes conseillés)\n• 🧴 Crème solaire — activités en plein air !\n• 💧 Gourde — points d'eau sur place\n• 🍫 Collations légères\n• 😄 Bonne humeur et énergie !`,
+    parking:    `Oui, un **parking gratuit** est disponible sur le site à **Férin** ! Pas de stress pour se garer 🚗`,
+    famille:    `Tout à fait ! Le **Pass Visiteur à 5€** est parfait pour les accompagnants — accès au village bien-être et à la soirée musicale. Les enfants sont les bienvenus 👨‍👩‍👧`,
+    default:    `Je suis **Marie**, l'organisatrice de FiTN'ESTiVAL et coach à **Happy Move Goeulzin** ! Tu peux me demander les **tarifs**, les **activités**, comment se **préparer**, le **lieu** ou comment **réserver** 💜`,
   };
 
   function localReply(q) {
     q = q.toLowerCase();
+    if (/happy.?move|goeulzin|association/.test(q)) return KB.happymove;
+    if (/prépare|préparer|préparation|avant|conseil|entraîn/.test(q)) return KB.preparer;
+    if (/amener|apporter|emporter|quoi prendre|prévoir/.test(q)) return KB.amener;
+    if (/parking|voiture|garer|stationn/.test(q)) return KB.parking;
+    if (/famille|enfant|accompagn|ami/.test(q)) return KB.famille;
     if (/body.?attack/.test(q)) return KB.bodyattack;
     if (/hiit/.test(q)) return KB.hiit;
     if (/yoga|pilates|méditation|stretching|flow/.test(q)) return KB.yoga;
