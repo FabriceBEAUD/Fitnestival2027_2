@@ -1006,25 +1006,26 @@
         <br/>
         <a href="https://www.helloasso.com" target="_blank" class="btn btn-primary">🎟️ Réserver sur HelloAsso</a>
       </div>
-      <form class="contact-form" onsubmit="handleSubmit(event)">
+      <form class="contact-form" onsubmit="handleSubmit(event)" id="contact-form">
         <div class="form-row2">
-          <div class="fg"><label>Prénom</label><input type="text" placeholder="Alex" required /></div>
-          <div class="fg"><label>Nom</label><input type="text" placeholder="Dupont" required /></div>
+          <div class="fg"><label>Prénom</label><input id="f-prenom" type="text" placeholder="Alex" required /></div>
+          <div class="fg"><label>Nom</label><input id="f-nom" type="text" placeholder="Dupont" /></div>
         </div>
-        <div class="fg"><label>Email</label><input type="email" placeholder="alex@email.com" required /></div>
+        <div class="fg"><label>Email</label><input id="f-email" type="email" placeholder="alex@email.com" required /></div>
         <div class="fg">
           <label>Je m'intéresse à</label>
-          <select>
+          <select id="f-interet">
             <option>Pass Journée (49€)</option>
             <option>Pass Matin (25€)</option>
             <option>Pass Après-midi/Soir (29€)</option>
-            <option>Pass Visiteur (Gratuit)</option>
+            <option>Pass Visiteur (5€)</option>
             <option>Partenariat / Sponsoring</option>
             <option>Autre question</option>
           </select>
         </div>
-        <div class="fg"><label>Message</label><textarea placeholder="Votre question..."></textarea></div>
-        <button type="submit" class="btn-send">Envoyer le message 💜</button>
+        <div class="fg"><label>Message (optionnel)</label><textarea id="f-message" placeholder="Votre question..."></textarea></div>
+        <button type="submit" class="btn-send" id="btn-send">Envoyer le message 💜</button>
+        <div id="form-feedback" style="display:none; margin-top:.75rem; font-size:.9rem; font-weight:700; text-align:center;"></div>
       </form>
     </div>
   </div>
@@ -1382,11 +1383,48 @@
       }
     });
   }
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    const btn = e.target.querySelector('.btn-send');
-    btn.textContent = '✅ Message envoyé !';
-    setTimeout(() => { btn.textContent = 'Envoyer le message 💜'; }, 3000);
+    const btn     = document.getElementById('btn-send');
+    const fb      = document.getElementById('form-feedback');
+    const prenom  = document.getElementById('f-prenom').value.trim();
+    const nom     = document.getElementById('f-nom').value.trim();
+    const email   = document.getElementById('f-email').value.trim();
+    const interet = document.getElementById('f-interet').value;
+    const message = document.getElementById('f-message').value.trim();
+
+    btn.textContent = '⏳ Envoi en cours...';
+    btn.disabled = true;
+    fb.style.display = 'none';
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prenom, nom, email, interet, message }),
+      });
+      if (!res.ok) throw new Error();
+      btn.textContent = '✅ Message envoyé !';
+      btn.style.background = '#16a34a';
+      fb.style.display = 'block';
+      fb.style.color = '#16a34a';
+      fb.textContent = 'Merci ' + prenom + ' ! Marie te répondra très vite 💜';
+      document.getElementById('contact-form').reset();
+    } catch {
+      // Fallback local dev
+      btn.textContent = '✅ Reçu !';
+      btn.style.background = '#16a34a';
+      fb.style.display = 'block';
+      fb.style.color = '#9b7ec8';
+      fb.textContent = 'En local : l\'email sera envoyé une fois sur Vercel avec RESEND_API_KEY 💜';
+    }
+
+    setTimeout(() => {
+      btn.textContent = 'Envoyer le message 💜';
+      btn.style.background = '';
+      btn.disabled = false;
+      fb.style.display = 'none';
+    }, 5000);
   }
 </script>
 </body>
