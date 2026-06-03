@@ -317,6 +317,22 @@
       margin: 0; color: var(--white);
       display: flex; align-items: center; gap: .6rem;
     }
+    /* Fix édition #2 -> #3 sur photo Ysabeau */
+    .edition-fix {
+      position: absolute;
+      bottom: 31%; right: 6%;
+      width: 22px;
+      background: #6b21c8;
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: .95rem;
+      letter-spacing: .05em;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      padding: 2px 3px;
+      pointer-events: none;
+    }
     .coach-orga {
       font-family: Montserrat, sans-serif;
       font-size: .65rem; font-weight: 800;
@@ -1015,6 +1031,7 @@
       <div class="coach-card reveal" style="transition-delay:.16s">
         <div class="coach-img-wrap">
           <img src="img/Coach/YSABEAU.jpg" alt="Ysabeau" style="object-position: center center;" />
+          <div class="edition-fix">#3</div>
           <div class="coach-tags"><span>Hargne</span><span>Rigueur</span><span>Authenticité</span></div>
         </div>
         <div class="coach-info">
