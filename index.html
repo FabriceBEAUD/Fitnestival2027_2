@@ -88,8 +88,9 @@
 
     /* ── COUNTDOWN ── */
     .countdown-wrap {
-      display: flex; gap: .75rem; flex-wrap: wrap;
+      display: flex; gap: .6rem;
       justify-content: flex-start; margin: 1.75rem 0 .5rem;
+      flex-wrap: nowrap;
     }
     .cd-block { display: flex; flex-direction: column; align-items: center; gap: .35rem; }
     .cd-card {
@@ -99,32 +100,39 @@
       border: 1px solid rgba(255,255,255,.18);
       box-shadow: 0 8px 24px rgba(0,0,0,.35);
     }
+    /* Secondes : fond légèrement différent pour les faire ressortir */
+    #cd-secs { border-color: var(--orange); background: rgba(255,122,0,.12); }
+
     .cd-num {
       position: absolute; inset: 0;
       display: flex; align-items: center; justify-content: center;
       font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem;
       color: #fff; letter-spacing: .02em;
-      transition: none;
     }
-    .cd-num.exit {
-      animation: cdExit .25s ease-in forwards;
-    }
-    .cd-num.enter {
-      animation: cdEnter .25s ease-out forwards;
-    }
-    @keyframes cdExit  { to { transform: translateY(-100%); opacity: 0; } }
-    @keyframes cdEnter { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .cd-num.exit  { animation: cdExit  .2s ease-in  forwards; }
+    .cd-num.enter { animation: cdEnter .2s ease-out forwards; }
+    @keyframes cdExit  { to   { transform: translateY(-110%); opacity: 0; } }
+    @keyframes cdEnter { from { transform: translateY( 110%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     .cd-line {
       position: absolute; left: 0; right: 0; top: 50%;
       height: 1px; background: rgba(0,0,0,.3); z-index: 2;
     }
     .cd-label {
-      font-size: .65rem; font-weight: 900; text-transform: uppercase;
-      letter-spacing: .12em; color: var(--yellow);
+      font-size: .62rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--yellow);
     }
+    #cd-secs + .cd-label { color: var(--orange); }
     .cd-sep {
       font-family: 'Bebas Neue'; font-size: 2.6rem; color: var(--orange);
       align-self: flex-start; margin-top: 14px; opacity: .7; line-height: 1;
+    }
+    /* Mobile countdown */
+    @media(max-width: 480px) {
+      .countdown-wrap { gap: .35rem; }
+      .cd-card { width: 56px; height: 62px; border-radius: 10px; }
+      .cd-num  { font-size: 2rem; }
+      .cd-sep  { font-size: 2rem; margin-top: 10px; }
+      .cd-label { font-size: .55rem; }
     }
     .hero-card {
       background: #ffffff16; border: 1px solid #ffffff30;
@@ -257,7 +265,10 @@
     /* ── STATS ── */
     .stats-section { background: linear-gradient(135deg,#31006e,#5a0bb7); padding: 4rem 0; }
     .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-    @media(max-width:768px){ .stats-grid { grid-template-columns: repeat(2,1fr); } }
+    @media(max-width:768px){ .stats-grid { grid-template-columns: repeat(3,1fr); gap: .75rem; } }
+    @media(max-width:768px){ .stat-num { font-size: clamp(1.8rem,7vw,3rem); } }
+    @media(max-width:768px){ .stat-lbl { font-size: .65rem; } }
+    @media(max-width:768px){ .stat-card { padding: 1.25rem .5rem; } }
     .stat-card {
       text-align: center; padding: 2rem 1rem;
       background: rgba(255,255,255,.07); border-radius: 20px;
@@ -941,11 +952,22 @@
     if (d !== prev.days)  { setVal(cdEls.days,  d); prev.days  = d; }
     if (h !== prev.hours) { setVal(cdEls.hours, h); prev.hours = h; }
     if (m !== prev.mins)  { setVal(cdEls.mins,  m); prev.mins  = m; }
+    // Secondes : toujours animer (même valeur différente garantie chaque seconde)
     if (s !== prev.secs)  { setVal(cdEls.secs,  s); prev.secs  = s; }
   }
 
-  tick();
-  setInterval(tick, 1000);
+  // Tick immédiat + interval précis calé sur la seconde système
+  function startClock() {
+    tick();
+    const now = new Date();
+    const msToNextSec = 1000 - now.getMilliseconds();
+    setTimeout(() => {
+      tick();
+      setInterval(tick, 1000);
+    }, msToNextSec);
+  }
+
+  startClock();
 </script>
 
 <!-- ── CHATBOT MARIE ── -->
