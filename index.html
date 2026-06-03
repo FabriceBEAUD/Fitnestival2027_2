@@ -376,6 +376,56 @@
     .reveal-right { opacity: 0; transform: translateX(32px);  transition: opacity .6s ease, transform .6s ease; }
     .reveal-right.visible { opacity: 1; transform: translateX(0); }
 
+    /* ── PLAN DU SITE ── */
+    .plan-section { background: linear-gradient(180deg, #16072d, #220a45); }
+    .plan-card {
+      cursor: pointer; border-radius: 24px; overflow: hidden;
+      border: 2px solid rgba(255,200,40,.2);
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+      transition: transform .3s, box-shadow .3s;
+    }
+    .plan-card:hover { transform: translateY(-6px); box-shadow: 0 36px 80px rgba(0,0,0,.6); }
+    .plan-img-wrap { position: relative; overflow: hidden; }
+    .plan-img-wrap img {
+      width: 100%; display: block;
+      transition: transform .5s ease;
+    }
+    .plan-card:hover .plan-img-wrap img { transform: scale(1.04); }
+    .plan-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(22,7,45,.85) 0%, transparent 50%);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 2rem; opacity: 0; transition: opacity .3s;
+    }
+    .plan-card:hover .plan-overlay { opacity: 1; }
+    .plan-zoom-btn {
+      background: linear-gradient(90deg, var(--yellow), var(--orange));
+      color: #240033; font-weight: 900; font-size: .95rem;
+      padding: .75rem 1.8rem; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: .06em;
+      box-shadow: 0 8px 24px rgba(0,0,0,.4);
+    }
+    .plan-legend {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: .6rem;
+      background: rgba(255,255,255,.04); padding: 1.25rem 1.5rem;
+      border-top: 1px solid rgba(255,255,255,.08);
+    }
+    @media(max-width:600px){ .plan-legend { grid-template-columns: 1fr 1fr; } }
+    .plan-legend-item {
+      display: flex; align-items: center; gap: .5rem;
+      font-size: .82rem; color: #d1d5db; font-weight: 600;
+    }
+    .pleg {
+      width: 28px; height: 28px; border-radius: 8px; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .pleg.fit     { background: rgba(155,33,200,.3); }
+    .pleg.air     { background: rgba(255,122,0,.3); }
+    .pleg.flow    { background: rgba(34,168,238,.3); }
+    .pleg.food    { background: rgba(255,200,40,.2); }
+    .pleg.entry   { background: rgba(34,197,94,.2); }
+    .pleg.parking { background: rgba(255,255,255,.1); }
+
     /* ── CONTACT ── */
     .contact { background: #fff; color: #1d1030; }
     .contact .section-title { color: #1d1030; }
@@ -912,6 +962,31 @@
   <img id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
   <div id="lightbox-caption"></div>
 </div>
+
+<!-- PLAN DU SITE -->
+<section class="plan-section section">
+  <div class="container">
+    <div class="section-tag reveal">📍 Plan du site</div>
+    <h2 class="section-title reveal">Où se <span style="color:var(--yellow)">retrouver</span> ?</h2>
+    <p class="lead reveal" style="transition-delay:.1s">Retrouve toutes les zones du festival sur le plan — clique pour agrandir.</p>
+    <div class="plan-card reveal" style="transition-delay:.15s" onclick="openLightbox('img/plan-du-site.jpg','Plan du site FiTN\'ESTiVAL 2027')">
+      <div class="plan-img-wrap">
+        <img src="img/plan-du-site.jpg" alt="Plan du site FiTN'ESTiVAL 2027" />
+        <div class="plan-overlay">
+          <div class="plan-zoom-btn">🔍 Agrandir le plan</div>
+        </div>
+      </div>
+      <div class="plan-legend">
+        <div class="plan-legend-item"><span class="pleg fit">💜</span> Fit'Zone — Fitness &amp; Cardio</div>
+        <div class="plan-legend-item"><span class="pleg air">🟠</span> Air'Zone — Outdoor &amp; Défi</div>
+        <div class="plan-legend-item"><span class="pleg flow">🔵</span> Flow'Zone — Bien-être</div>
+        <div class="plan-legend-item"><span class="pleg food">🍔</span> Restauration &amp; Boissons</div>
+        <div class="plan-legend-item"><span class="pleg entry">🚪</span> Entrée principale</div>
+        <div class="plan-legend-item"><span class="pleg parking">🅿️</span> Parking gratuit</div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- CONTACT -->
 <section class="contact section" id="contact">
