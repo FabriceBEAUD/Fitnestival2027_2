@@ -401,6 +401,46 @@
       border-radius: 16px;
     }
     .gallery-item:hover img { transform: scale(1.05); }
+    /* Vidéo dans galerie */
+    .gallery-video-item { position: relative; }
+    .gallery-video-thumb {
+      width: 100%; display: block; border-radius: 16px;
+      aspect-ratio: 16/9; object-fit: cover; transition: transform .4s;
+    }
+    .gallery-video-item:hover .gallery-video-thumb { transform: scale(1.03); }
+    .video-play-btn {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+      width: 64px; height: 64px; border-radius: 50%;
+      background: rgba(255,200,40,.9);
+      color: #240033; font-size: 1.6rem;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 30px rgba(0,0,0,.4);
+      transition: transform .2s, background .2s;
+      pointer-events: none;
+    }
+    .gallery-video-item:hover .video-play-btn {
+      transform: translate(-50%,-50%) scale(1.15);
+      background: var(--yellow);
+    }
+    /* Lightbox vidéo */
+    #video-lightbox {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(10,0,30,.95); backdrop-filter: blur(10px);
+      align-items: center; justify-content: center;
+    }
+    #video-lightbox.open { display: flex; }
+    #video-lightbox video {
+      max-width: 92vw; max-height: 85vh;
+      border-radius: 16px; box-shadow: 0 30px 80px #000a;
+    }
+    #video-lightbox-close {
+      position: absolute; top: 1.5rem; right: 1.5rem;
+      background: rgba(255,255,255,.15); border: none; color: #fff;
+      width: 44px; height: 44px; border-radius: 50%; font-size: 1.3rem;
+      cursor: pointer; transition: background .2s; z-index: 1;
+    }
+    #video-lightbox-close:hover { background: rgba(255,255,255,.3); }
     .gallery-overlay {
       position: absolute; inset: 0; border-radius: 16px;
       background: linear-gradient(to top, rgba(90,11,183,.3), transparent 60%);
@@ -1102,6 +1142,14 @@
     <h2 class="section-title reveal">L'ambiance</h2>
     <p class="lead reveal" style="transition-delay:.1s">Des éditions précédentes — clique pour agrandir 🔍</p>
     <div class="gallery-grid">
+
+      <!-- VIDÉO AMBIANCE -->
+      <div class="gallery-item gallery-video-item" onclick="openVideoLightbox()">
+        <video class="gallery-video-thumb" src="img/Video_Ambiance.mp4" muted loop playsinline preload="metadata"></video>
+        <div class="gallery-overlay"></div>
+        <div class="video-play-btn">▶</div>
+      </div>
+
       <div class="gallery-item" onclick="openLightbox('img/ambiance-01.jpg','Yoga outdoor')">
         <img src="img/ambiance-01.jpg" alt="Yoga outdoor" loading="lazy" />
         <div class="gallery-overlay"><span>Yoga outdoor</span></div>
@@ -1161,6 +1209,12 @@
     </div>
   </div>
 </section>
+
+<!-- LIGHTBOX VIDÉO -->
+<div id="video-lightbox" onclick="closeVideoLightbox()">
+  <button id="video-lightbox-close" onclick="closeVideoLightbox()">✕</button>
+  <video id="lightbox-video" src="img/Video_Ambiance.mp4" controls autoplay onclick="event.stopPropagation()"></video>
+</div>
 
 <!-- LIGHTBOX -->
 <div id="lightbox" onclick="closeLightbox()">
@@ -1562,6 +1616,24 @@
   document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
 
   // ── LIGHTBOX ──
+  // Vidéo hover autoplay
+  document.querySelectorAll('.gallery-video-thumb').forEach(v => {
+    v.parentElement.addEventListener('mouseenter', () => v.play());
+    v.parentElement.addEventListener('mouseleave', () => { v.pause(); v.currentTime = 0; });
+  });
+
+  function openVideoLightbox() {
+    document.getElementById('video-lightbox').classList.add('open');
+    document.getElementById('lightbox-video').play();
+    document.body.style.overflow = 'hidden';
+  }
+  function closeVideoLightbox() {
+    document.getElementById('video-lightbox').classList.remove('open');
+    const v = document.getElementById('lightbox-video');
+    v.pause(); v.currentTime = 0;
+    document.body.style.overflow = '';
+  }
+
   function openLightbox(src, caption) {
     document.getElementById('lightbox-img').src = src;
     document.getElementById('lightbox-caption').textContent = caption;
