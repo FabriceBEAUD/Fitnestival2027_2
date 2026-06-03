@@ -262,6 +262,69 @@
     .helloasso-wrap { text-align: center; margin-top: 2.5rem; }
     .helloasso-wrap p { margin-bottom: 1rem; color: #fffdf0; font-size: .9rem; }
 
+    /* ── COACHS ── */
+    .coachs-section { background: linear-gradient(180deg, #16072d 0%, #31006e 100%); }
+    .coachs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+    .coach-card {
+      border-radius: 20px; overflow: hidden;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.1);
+      transition: transform .3s, box-shadow .3s;
+      cursor: default;
+    }
+    .coach-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 60px rgba(0,0,0,.5);
+      border-color: rgba(255,200,40,.35);
+    }
+    .coach-img-wrap {
+      position: relative; overflow: hidden;
+    }
+    .coach-img-wrap img {
+      width: 100%; aspect-ratio: 3/4;
+      object-fit: cover; object-position: center top;
+      display: block; transition: transform .4s;
+    }
+    .coach-card:hover .coach-img-wrap img { transform: scale(1.06); }
+    .coach-tags {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; flex-direction: column; gap: .3rem;
+      padding: 2rem .9rem .9rem;
+      background: linear-gradient(to top, rgba(22,7,45,.92) 0%, transparent 100%);
+      opacity: 0; transform: translateY(8px);
+      transition: opacity .3s, transform .3s;
+    }
+    .coach-card:hover .coach-tags { opacity: 1; transform: translateY(0); }
+    .coach-tags span {
+      display: inline-block; width: fit-content;
+      background: rgba(255,200,40,.18); border: 1px solid rgba(255,200,40,.35);
+      color: var(--yellow); font-size: .7rem; font-weight: 800;
+      padding: .2rem .65rem; border-radius: 999px;
+      text-transform: uppercase; letter-spacing: .07em;
+    }
+    .coach-info {
+      padding: .85rem 1rem .9rem;
+    }
+    .coach-info h3 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.5rem; letter-spacing: .05em;
+      margin: 0; color: var(--white);
+      display: flex; align-items: center; gap: .6rem;
+    }
+    .coach-orga {
+      font-family: Montserrat, sans-serif;
+      font-size: .65rem; font-weight: 800;
+      background: linear-gradient(90deg, var(--yellow), var(--orange));
+      color: #240033; padding: .2rem .6rem;
+      border-radius: 999px; text-transform: uppercase; letter-spacing: .06em;
+      vertical-align: middle;
+    }
+    .coach-marie .coach-info h3 { color: var(--yellow); }
+
     /* ── STATS ── */
     .stats-section { background: linear-gradient(135deg,#31006e,#5a0bb7); padding: 4rem 0; }
     .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
@@ -480,6 +543,7 @@
     <ul class="menu">
       <li><a href="#concept">Concept</a></li>
       <li><a href="#activites">Activités</a></li>
+    <li><a href="#coachs">Coachs</a></li>
       <li><a href="#programme">Programme</a></li>
       <li><a href="#tarifs">Tarifs</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -874,6 +938,108 @@
     <div class="helloasso-wrap">
       <p>Envie de prendre votre pass ? Rendez-vous sur la page HelloAsso FiTN'ESTiVAL</p>
       <a href="https://www.helloasso.com" target="_blank" class="btn btn-primary">🎟️ Réserver sur HelloAsso</a>
+    </div>
+  </div>
+</section>
+
+<!-- COACHS -->
+<section class="coachs-section section" id="coachs">
+  <div class="container">
+    <div class="section-tag reveal">🏅 Les coachs</div>
+    <h2 class="section-title reveal">Une équipe <span style="color:var(--yellow)">de feu</span></h2>
+    <p class="lead reveal" style="transition-delay:.1s">9 coachs passionnés pour t'accompagner, te motiver et te faire vibrer toute la journée.</p>
+    <div class="coachs-grid">
+
+      <div class="coach-card reveal">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/DESS.jpg" alt="Dess" />
+          <div class="coach-tags"><span>Expérience</span><span>Positivité</span><span>Bienveillance</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Dess</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal" style="transition-delay:.08s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/SAM.jpg" alt="Sam" />
+          <div class="coach-tags"><span>Détermination</span><span>Inspiration</span><span>Discipline</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Sam</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal" style="transition-delay:.16s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/YSABEAU.jpg" alt="Ysabeau" />
+          <div class="coach-tags"><span>Hargne</span><span>Rigueur</span><span>Authenticité</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Ysabeau</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal" style="transition-delay:.24s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/JONATHAN.jpg" alt="Jonathan" />
+          <div class="coach-tags"><span>Dépassement</span><span>Engagement</span><span>Performance</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Jonathan</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal" style="transition-delay:.32s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/CARO.jpg" alt="Caro" />
+          <div class="coach-tags"><span>Charisme</span><span>Générosité</span><span>Énergie</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Caro</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal" style="transition-delay:.4s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/FABIAN.jpg" alt="Fabian" />
+          <div class="coach-tags"><span>Exigence</span><span>Humour</span><span>Mental</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Fabian</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal" style="transition-delay:.48s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/ALISON.jpg" alt="Alison" />
+          <div class="coach-tags"><span>Résilience</span><span>Combativité</span><span>Force</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Alison</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal" style="transition-delay:.56s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/SIGRID.jpg" alt="Sigrid" />
+          <div class="coach-tags"><span>Maîtrise</span><span>Sérénité</span><span>Équilibre</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Sigrid</h3>
+        </div>
+      </div>
+
+      <div class="coach-card reveal coach-marie" style="transition-delay:.64s">
+        <div class="coach-img-wrap">
+          <img src="img/Coach/MARIE.jpg" alt="Marie" />
+          <div class="coach-tags"><span>Passion</span><span>Persévérance</span><span>Implication</span></div>
+        </div>
+        <div class="coach-info">
+          <h3>Marie <span class="coach-orga">Organisatrice</span></h3>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
