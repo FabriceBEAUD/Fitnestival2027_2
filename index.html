@@ -85,6 +85,47 @@
     .date-big { font-family: 'Bebas Neue'; font-size: 5rem; line-height: .85; }
     .date-info strong { font-size: 1.4rem; display: block; }
     .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: .5rem; }
+
+    /* ── COUNTDOWN ── */
+    .countdown-wrap {
+      display: flex; gap: .75rem; flex-wrap: wrap;
+      justify-content: flex-start; margin: 1.75rem 0 .5rem;
+    }
+    .cd-block { display: flex; flex-direction: column; align-items: center; gap: .35rem; }
+    .cd-card {
+      position: relative; width: 68px; height: 76px;
+      border-radius: 14px; overflow: hidden;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.18);
+      box-shadow: 0 8px 24px rgba(0,0,0,.35);
+    }
+    .cd-num {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.6rem;
+      color: #fff; letter-spacing: .02em;
+      transition: none;
+    }
+    .cd-num.exit {
+      animation: cdExit .25s ease-in forwards;
+    }
+    .cd-num.enter {
+      animation: cdEnter .25s ease-out forwards;
+    }
+    @keyframes cdExit  { to { transform: translateY(-100%); opacity: 0; } }
+    @keyframes cdEnter { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .cd-line {
+      position: absolute; left: 0; right: 0; top: 50%;
+      height: 1px; background: rgba(0,0,0,.3); z-index: 2;
+    }
+    .cd-label {
+      font-size: .65rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: .12em; color: var(--yellow);
+    }
+    .cd-sep {
+      font-family: 'Bebas Neue'; font-size: 2.6rem; color: var(--orange);
+      align-self: flex-start; margin-top: 14px; opacity: .7; line-height: 1;
+    }
     .hero-card {
       background: #ffffff16; border: 1px solid #ffffff30;
       border-radius: 32px; padding: 1rem;
@@ -303,6 +344,29 @@
           <span>Férin, Nord (59)<br>Accueil dès 9h00</span>
         </div>
       </div>
+      <!-- COUNTDOWN -->
+      <div class="countdown-wrap">
+        <div class="cd-block">
+          <div class="cd-card" id="cd-days"><div class="cd-num">00</div><div class="cd-line"></div></div>
+          <span class="cd-label">Jours</span>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-card" id="cd-hours"><div class="cd-num">00</div><div class="cd-line"></div></div>
+          <span class="cd-label">Heures</span>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-card" id="cd-mins"><div class="cd-num">00</div><div class="cd-line"></div></div>
+          <span class="cd-label">Minutes</span>
+        </div>
+        <div class="cd-sep">:</div>
+        <div class="cd-block">
+          <div class="cd-card" id="cd-secs"><div class="cd-num">00</div><div class="cd-line"></div></div>
+          <span class="cd-label">Secondes</span>
+        </div>
+      </div>
+
       <div class="hero-btns">
         <a href="#tarifs" class="btn btn-primary">Voir les pass</a>
         <a href="#activites" class="btn btn-secondary">Découvrir les activités</a>
@@ -680,6 +744,49 @@
   </div>
   <p>Samedi 22 mai 2027 · Férin, Nord (59) · Édition #3<br />© 2027 FiTN'ESTiVAL · Association Éclat &amp; Forme</p>
 </footer>
+
+<!-- ── COUNTDOWN JS ── -->
+<script>
+  const TARGET = new Date('2027-05-22T09:00:00');
+  const cdEls  = {
+    days:  document.getElementById('cd-days'),
+    hours: document.getElementById('cd-hours'),
+    mins:  document.getElementById('cd-mins'),
+    secs:  document.getElementById('cd-secs'),
+  };
+  const prev = { days: -1, hours: -1, mins: -1, secs: -1 };
+
+  function setVal(el, val) {
+    const str = String(val).padStart(2, '0');
+    const old = el.querySelector('.cd-num');
+    // Animate out
+    old.classList.add('exit');
+    old.addEventListener('animationend', () => {
+      old.remove();
+      const n = document.createElement('div');
+      n.className = 'cd-num enter';
+      n.textContent = str;
+      el.appendChild(n);
+    }, { once: true });
+  }
+
+  function tick() {
+    const now  = new Date();
+    const diff = Math.max(0, TARGET - now);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000)  / 60000);
+    const s = Math.floor((diff % 60000)    / 1000);
+
+    if (d !== prev.days)  { setVal(cdEls.days,  d); prev.days  = d; }
+    if (h !== prev.hours) { setVal(cdEls.hours, h); prev.hours = h; }
+    if (m !== prev.mins)  { setVal(cdEls.mins,  m); prev.mins  = m; }
+    if (s !== prev.secs)  { setVal(cdEls.secs,  s); prev.secs  = s; }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>
 
 <!-- ── CHATBOT MARIE ── -->
 <style>
