@@ -321,26 +321,29 @@
 
     /* ── GALLERY ── */
     .gallery { background: #12051f; }
-    .gallery-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; }
-    @media(max-width:768px){ .gallery-grid { grid-template-columns:1fr 1fr; } }
-    @media(max-width:500px) { .gallery-grid { grid-template-columns:1fr; } }
+    .gallery-grid {
+      columns: 3; column-gap: .9rem;
+    }
+    @media(max-width:768px){ .gallery-grid { columns: 2; } }
+    @media(max-width:480px){ .gallery-grid { columns: 1; } }
     .gallery-item {
-      position: relative; overflow: hidden; border-radius: 20px;
-      cursor: pointer; box-shadow: 0 20px 50px #0007;
+      position: relative; overflow: hidden; border-radius: 16px;
+      cursor: pointer; box-shadow: 0 12px 40px #0007;
+      break-inside: avoid; margin-bottom: .9rem; display: block;
     }
     .gallery-item img {
-      width: 100%; height: 280px; object-fit: cover;
-      object-position: center top; display: block; transition: transform .4s;
+      width: 100%; display: block; transition: transform .4s;
+      border-radius: 16px;
     }
-    .gallery-item:hover img { transform: scale(1.08); }
+    .gallery-item:hover img { transform: scale(1.05); }
     .gallery-overlay {
-      position: absolute; inset: 0;
-      background: linear-gradient(to top, rgba(90,11,183,.7), transparent 50%);
+      position: absolute; inset: 0; border-radius: 16px;
+      background: linear-gradient(to top, rgba(90,11,183,.75), transparent 55%);
       opacity: 0; transition: opacity .3s;
       display: flex; align-items: flex-end; padding: 1rem;
     }
     .gallery-item:hover .gallery-overlay { opacity: 1; }
-    .gallery-overlay span { font-weight: 700; font-size: .9rem; color: #fff; }
+    .gallery-overlay span { font-weight: 700; font-size: .88rem; color: #fff; }
     /* Lightbox */
     #lightbox {
       display: none; position: fixed; inset: 0; z-index: 300;
@@ -841,19 +844,63 @@
 <section class="gallery section">
   <div class="container">
     <h2 class="section-title reveal">L'ambiance</h2>
-    <p class="lead reveal" style="transition-delay:.1s">Clique sur une photo pour l'agrandir 🔍</p>
+    <p class="lead reveal" style="transition-delay:.1s">Des éditions précédentes — clique pour agrandir 🔍</p>
     <div class="gallery-grid">
-      <div class="gallery-item reveal" onclick="openLightbox('img/challenge_bootcamp___ambiance_collective.jpg','Challenge Bootcamp')">
-        <img src="img/challenge_bootcamp___ambiance_collective.jpg" alt="Challenge Bootcamp" />
-        <div class="gallery-overlay"><span>Challenge Bootcamp</span></div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-01.jpg','Yoga outdoor')">
+        <img src="img/ambiance-01.jpg" alt="Yoga outdoor" loading="lazy" />
+        <div class="gallery-overlay"><span>Yoga outdoor</span></div>
       </div>
-      <div class="gallery-item reveal" style="transition-delay:.1s" onclick="openLightbox('img/challenge__quipe___vibes_du_festival.jpg','Challenge Équipe')">
-        <img src="img/challenge__quipe___vibes_du_festival.jpg" alt="Challenge Équipe" />
-        <div class="gallery-overlay"><span>Challenge Équipe</span></div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-02.jpg','Food truck')">
+        <img src="img/ambiance-02.jpg" alt="Food truck" loading="lazy" />
+        <div class="gallery-overlay"><span>Food truck 🍔</span></div>
       </div>
-      <div class="gallery-item reveal" style="transition-delay:.2s" onclick="openLightbox('img/body_attack___fun_garanti.jpg','Body Attack')">
-        <img src="img/body_attack___fun_garanti.jpg" alt="Body Attack" />
-        <div class="gallery-overlay"><span>Body Attack</span></div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-03.jpg','Arrivée des participants')">
+        <img src="img/ambiance-03.jpg" alt="Arrivée des participants" loading="lazy" />
+        <div class="gallery-overlay"><span>Arrivée des participants</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-04.jpg','Team fitness')">
+        <img src="img/ambiance-04.jpg" alt="Team fitness" loading="lazy" />
+        <div class="gallery-overlay"><span>Team fitness 💪</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-05.jpg','Selfie géant')">
+        <img src="img/ambiance-05.jpg" alt="Selfie géant" loading="lazy" />
+        <div class="gallery-overlay"><span>Selfie géant 🤳</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-06.jpg','Cardio combat outdoor')">
+        <img src="img/ambiance-06.jpg" alt="Cardio combat outdoor" loading="lazy" />
+        <div class="gallery-overlay"><span>Cardio combat outdoor</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-07.jpg','Pilates outdoor')">
+        <img src="img/ambiance-07.jpg" alt="Pilates outdoor" loading="lazy" />
+        <div class="gallery-overlay"><span>Pilates outdoor</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-08.jpg','Photo de groupe')">
+        <img src="img/ambiance-08.jpg" alt="Photo de groupe" loading="lazy" />
+        <div class="gallery-overlay"><span>Photo de groupe 🧡</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-09.jpg','Bootcamp pelouse')">
+        <img src="img/ambiance-09.jpg" alt="Bootcamp pelouse" loading="lazy" />
+        <div class="gallery-overlay"><span>Bootcamp pelouse</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-10.jpg','Dance fitness')">
+        <img src="img/ambiance-10.jpg" alt="Dance fitness" loading="lazy" />
+        <div class="gallery-overlay"><span>Dance fitness 💃</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-11.jpg','Équipe fun')">
+        <img src="img/ambiance-11.jpg" alt="Équipe fun" loading="lazy" />
+        <div class="gallery-overlay"><span>Équipe fun 🎉</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-12.jpg','Zumba en salle')">
+        <img src="img/ambiance-12.jpg" alt="Zumba en salle" loading="lazy" />
+        <div class="gallery-overlay"><span>Zumba en salle 🎵</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-13.jpg','Circle dance')">
+        <img src="img/ambiance-13.jpg" alt="Circle dance" loading="lazy" />
+        <div class="gallery-overlay"><span>Circle dance</span></div>
+      </div>
+      <div class="gallery-item" onclick="openLightbox('img/ambiance-14.jpg','Energy non-stop')">
+        <img src="img/ambiance-14.jpg" alt="Energy non-stop" loading="lazy" />
+        <div class="gallery-overlay"><span>Energy non-stop ⚡</span></div>
       </div>
     </div>
   </div>
