@@ -265,10 +265,13 @@
     /* ── STATS ── */
     .stats-section { background: linear-gradient(135deg,#31006e,#5a0bb7); padding: 4rem 0; }
     .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; }
-    @media(max-width:768px){ .stats-grid { grid-template-columns: repeat(3,1fr); gap: .75rem; } }
-    @media(max-width:768px){ .stat-num { font-size: clamp(1.8rem,7vw,3rem); } }
-    @media(max-width:768px){ .stat-lbl { font-size: .65rem; } }
-    @media(max-width:768px){ .stat-card { padding: 1.25rem .5rem; } }
+    @media(max-width:768px){
+      .stats-grid  { grid-template-columns: repeat(3,1fr); gap: .6rem; }
+      .stat-card   { padding: 1.1rem .4rem; border-radius: 14px; }
+      .stat-num    { font-size: clamp(1.6rem, 6vw, 2.8rem); }
+      .stat-suffix { font-size: inherit; }
+      .stat-lbl    { font-size: .6rem; letter-spacing: .06em; margin-top: .2rem; }
+    }
     .stat-card {
       text-align: center; padding: 2rem 1rem;
       background: rgba(255,255,255,.07); border-radius: 20px;
@@ -919,7 +922,7 @@
 <!-- ── COUNTDOWN JS ── -->
 <script>
   const TARGET = new Date('2027-05-22T09:00:00');
-  const cdEls  = {
+  const cdEls = {
     days:  document.getElementById('cd-days'),
     hours: document.getElementById('cd-hours'),
     mins:  document.getElementById('cd-mins'),
@@ -929,21 +932,35 @@
 
   function setVal(el, val) {
     const str = String(val).padStart(2, '0');
-    const old = el.querySelector('.cd-num');
-    // Animate out
-    old.classList.add('exit');
-    old.addEventListener('animationend', () => {
-      old.remove();
-      const n = document.createElement('div');
-      n.className = 'cd-num enter';
-      n.textContent = str;
-      el.appendChild(n);
-    }, { once: true });
+    const cur = el.querySelector('.cd-num');
+    if (!cur || cur.textContent === str) return;
+
+    // Nouveau chiffre attend derrière
+    const next = document.createElement('div');
+    next.className = 'cd-num';
+    next.textContent = str;
+    next.style.cssText = 'transform:translateY(100%); opacity:0;';
+    el.appendChild(next);
+
+    // Sortie de l'ancien (vers le haut)
+    cur.style.transition = 'transform .22s ease-in, opacity .22s ease-in';
+    cur.style.transform  = 'translateY(-100%)';
+    cur.style.opacity    = '0';
+
+    // Entrée du nouveau (depuis le bas)
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        next.style.transition = 'transform .22s ease-out, opacity .22s ease-out';
+        next.style.transform  = 'translateY(0)';
+        next.style.opacity    = '1';
+      });
+    });
+
+    setTimeout(() => cur.remove(), 260);
   }
 
   function tick() {
-    const now  = new Date();
-    const diff = Math.max(0, TARGET - now);
+    const diff = Math.max(0, TARGET - new Date());
     const d = Math.floor(diff / 86400000);
     const h = Math.floor((diff % 86400000) / 3600000);
     const m = Math.floor((diff % 3600000)  / 60000);
@@ -952,22 +969,12 @@
     if (d !== prev.days)  { setVal(cdEls.days,  d); prev.days  = d; }
     if (h !== prev.hours) { setVal(cdEls.hours, h); prev.hours = h; }
     if (m !== prev.mins)  { setVal(cdEls.mins,  m); prev.mins  = m; }
-    // Secondes : toujours animer (même valeur différente garantie chaque seconde)
     if (s !== prev.secs)  { setVal(cdEls.secs,  s); prev.secs  = s; }
   }
 
-  // Tick immédiat + interval précis calé sur la seconde système
-  function startClock() {
-    tick();
-    const now = new Date();
-    const msToNextSec = 1000 - now.getMilliseconds();
-    setTimeout(() => {
-      tick();
-      setInterval(tick, 1000);
-    }, msToNextSec);
-  }
-
-  startClock();
+  // Calé sur la prochaine seconde entière
+  tick();
+  setTimeout(() => { tick(); setInterval(tick, 1000); }, 1000 - new Date().getMilliseconds());
 </script>
 
 <!-- ── CHATBOT MARIE ── -->
