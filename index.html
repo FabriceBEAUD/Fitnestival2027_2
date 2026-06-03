@@ -763,12 +763,12 @@
     <div class="marie-avatar">💜</div>
     <div class="marie-header-info">
       <strong>Marie</strong>
-      <span>Assistante FiTN'ESTiVAL · En ligne</span>
+      <span>Organisatrice FiTN'ESTiVAL · En ligne</span>
     </div>
     <button class="marie-close" onclick="toggleMarie()">✕</button>
   </div>
   <div id="marie-messages">
-    <div class="msg bot">Bonjour ! 👋 Je suis <strong>Marie</strong>, votre assistante FiTN'ESTiVAL 2027.<br/>Comment puis-je vous aider ?</div>
+    <div class="msg bot">Bonjour ! 👋 Je suis <strong>Marie</strong>, l'organisatrice de FiTN'ESTiVAL 2027.<br/>Comment puis-je t'aider ?</div>
   </div>
   <div class="marie-suggestions">
     <button class="sugg-btn" onclick="askMarie('Les tarifs ?')">💰 Les tarifs ?</button>
@@ -797,7 +797,7 @@
     reserver:   `Réservation via **HelloAsso** ! Retrouve la page FiTN'ESTiVAL sur helloasso.com ou contacte-nous à fitnestival@gmail.com 🎟️`,
     contact:    `Contacte **Marie Beaud'huin** :\n📧 fitnestival@gmail.com\n📸 @fitnestival (Instagram)\n👥 @fitnestival2 (Facebook)\n🎵 @fitnestival2 (TikTok)`,
     programme:  `Le programme détaillé sera annoncé prochainement ! 📅\nSuis-nous sur **@fitnestival** pour ne rien manquer.`,
-    default:    `Je suis Marie, ton assistante FiTN'ESTiVAL 2027 ! Tu peux me demander les **tarifs**, les **activités**, le **lieu**, comment **réserver** ou nous **contacter** 💜`,
+    default:    `Je suis **Marie**, l'organisatrice de FiTN'ESTiVAL 2027 ! Tu peux me demander les **tarifs**, les **activités**, le **lieu**, comment **réserver** ou nous **contacter** 💜`,
   };
 
   function localReply(q) {
@@ -859,7 +859,11 @@
   function addMsg(text, who) {
     const div = document.createElement('div');
     div.className = 'msg ' + who;
-    div.innerHTML = text.replace(/\n/g, '<br/>');
+    // Render **bold** and \n
+    const html = text
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/\n/g, '<br/>');
+    div.innerHTML = html;
     document.getElementById('marie-messages').appendChild(div);
     scrollChat();
   }
