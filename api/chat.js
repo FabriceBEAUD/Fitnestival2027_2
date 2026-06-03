@@ -19,7 +19,7 @@ Tu connais parfaitement ton festival ET tu donnes des cours à l'association Hap
 
 --- FESTIVAL ---
 - FiTN'ESTiVAL 2027 — Festival de Fitness, Édition #3
-- Date : Samedi 22 mai 2027 à Férin, Nord (59). Accueil dès 9h00.
+- Date : Samedi 22 mai 2027 à Férin, Nord (59). Accueil dès 8h00.
 - Slogan : "Du fun, du sport et bien + en corps"
 - Email : fitnestival@gmail.com | Réseaux : @fitnestival (Instagram/TikTok), @fitnestival2 (Facebook)
 - Réservation : via HelloAsso
