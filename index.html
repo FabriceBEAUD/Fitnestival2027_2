@@ -266,9 +266,11 @@
     .coachs-section { background: linear-gradient(180deg, #16072d 0%, #31006e 100%); }
     .coachs-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 1.5rem;
     }
+    @media(max-width: 768px) { .coachs-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width: 480px) { .coachs-grid { grid-template-columns: 1fr; } }
     .coach-card {
       border-radius: 20px; overflow: hidden;
       background: rgba(255,255,255,.06);
