@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FiTN'ESTiVAL 2027 — Férin, Nord</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --purple: #5a0bb7;
+      --pink:   #d01dd7;
+      --orange: #ff7a00;
+      --yellow: #ffc928;
+      --blue:   #22a8ee;
+      --dark:   #16072d;
+      --white:  #fff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font-family: Montserrat, Arial, sans-serif; color: var(--white); background: var(--dark); }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1120px, 92%); margin: auto; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      padding: 1rem 1.35rem; border-radius: 999px; font-weight: 900; text-transform: uppercase;
+      box-shadow: 0 16px 35px #0005; transition: .2s; font-size: .9rem; cursor: pointer; border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(90deg, var(--yellow), var(--orange)); color: #240033; }
+    .btn-secondary { background: var(--white); color: var(--purple); }
+
+    /* ── NAV ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: #16072dd9; backdrop-filter: blur(12px);
+      border-bottom: 1px solid #ffffff20;
+    }
+    .nav { height: 72px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.1rem; letter-spacing: .04em; }
+    .logo span { color: var(--yellow); }
+    .menu { display: flex; gap: 1.4rem; font-weight: 700; font-size: .88rem; list-style: none; margin: 0; padding: 0; }
+    .menu a:hover { color: var(--yellow); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    @media(max-width: 768px) { .menu { display: none; } }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; min-height: calc(100vh - 72px);
+      display: grid; place-items: center; overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, #ff38d9 0 12%, transparent 36%),
+        radial-gradient(circle at 80% 20%, #6f30ff 0 18%, transparent 42%),
+        linear-gradient(135deg, #31006e, #8f16c8 48%, #ff7a00);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: auto -10% -24% -10%; height: 45%;
+      background: linear-gradient(90deg, var(--yellow), #ff6b00, #ff4fc1);
+      border-radius: 50% 50% 0 0; filter: blur(2px);
+    }
+    .hero-grid {
+      position: relative; z-index: 1;
+      display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem;
+      align-items: center; padding: 4rem 0;
+    }
+    @media(max-width: 900px) { .hero-grid { grid-template-columns: 1fr; } }
+    .eyebrow {
+      display: inline-block; background: var(--blue); padding: .45rem .9rem;
+      border-radius: 8px; font-weight: 900; letter-spacing: .25em;
+      text-transform: uppercase; font-size: .85rem;
+    }
+    .edition {
+      display: inline-block; background: var(--yellow); color: #240033;
+      padding: .35rem .8rem; border-radius: 8px; font-weight: 900;
+      font-size: .8rem; margin-left: .5rem; letter-spacing: .05em;
+    }
+    .hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 10vw, 9rem); line-height: .82;
+      margin: 1.2rem 0 .5rem; text-shadow: 0 10px 25px #0007;
+      white-space: nowrap;
+    }
+    .hero h2 { font-size: clamp(1.2rem, 3vw, 2rem); margin: .2rem 0 1.2rem; }
+    .hero p { font-size: 1.1rem; line-height: 1.6; max-width: 600px; color: #fffdf0; }
+    .date-box { display: flex; gap: 1rem; align-items: center; margin: 1.7rem 0; }
+    .date-big { font-family: 'Bebas Neue'; font-size: 5rem; line-height: .85; }
+    .date-info strong { font-size: 1.4rem; display: block; }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: .5rem; }
+    .hero-card {
+      background: #ffffff16; border: 1px solid #ffffff30;
+      border-radius: 32px; padding: 1rem;
+      box-shadow: 0 30px 80px #0007; transform: rotate(2deg);
+    }
+    .hero-card img {
+      width: 100%; border-radius: 24px; display: block;
+      max-height: 460px; object-fit: cover; object-position: center top;
+    }
+
+    /* ── SECTIONS ── */
+    .section { padding: 5rem 0; }
+    .section-title {
+      font-family: 'Bebas Neue'; font-size: clamp(3rem, 7vw, 5rem);
+      line-height: .9; margin: 0 0 1.2rem;
+    }
+    .section-title::before {
+      content: ""; display: inline-block; width: 12px; height: 46px;
+      background: var(--yellow); border-radius: 999px;
+      margin-right: 16px; vertical-align: middle;
+    }
+    .lead { font-size: 1.1rem; line-height: 1.7; color: #fffdf0; max-width: 820px; margin-bottom: 2rem; }
+
+    /* ── CONCEPT ── */
+    .concept { background: linear-gradient(180deg, #16072d, #31006e); }
+    .concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem; margin-top: 2rem; }
+    @media(max-width: 768px) { .concept-grid { grid-template-columns: 1fr; } }
+    .concept-card {
+      background: #fff; color: #21003a; border-radius: 24px;
+      padding: 1.5rem; min-height: 180px; box-shadow: 0 18px 40px #0005;
+    }
+    .concept-card:nth-child(2) { background: linear-gradient(135deg, var(--yellow), var(--orange)); }
+    .concept-card:nth-child(3) { background: linear-gradient(135deg, var(--blue), #70d7ff); }
+    .concept-card h3 { font-family: 'Bebas Neue'; font-size: 1.8rem; margin: .2rem 0; }
+    .concept-card p { font-size: .95rem; line-height: 1.6; }
+
+    /* ── ACTIVITÉS ── */
+    .activites { background: linear-gradient(180deg, #31006e 0%, #16072d 100%); }
+    .zone-tabs { display: flex; gap: .6rem; margin-bottom: 2rem; flex-wrap: wrap; }
+    .zone-tab {
+      padding: .55rem 1.2rem; border-radius: 999px; font-weight: 800;
+      font-size: .82rem; cursor: pointer; border: 2px solid transparent;
+      transition: .2s; text-transform: uppercase; letter-spacing: .05em;
+    }
+    .zone-tab:hover { transform: scale(1.05); }
+    .tab-all { background: #ffffff20; border-color: #ffffff40; color: #fff; }
+    .tab-all.active { background: #fff; color: #31006e; }
+    .tab-fit { background: #9b21c830; border-color: #9b21c8; color: #d580ff; }
+    .tab-fit.active { background: #9b21c8; color: #fff; }
+    .tab-air { background: #ff7a0030; border-color: #ff7a00; color: #ffc070; }
+    .tab-air.active { background: #ff7a00; color: #fff; }
+    .tab-flow { background: #22a8ee30; border-color: #22a8ee; color: #80d4ff; }
+    .tab-flow.active { background: #22a8ee; color: #fff; }
+    .activites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+    .act-card {
+      background: #ffffff0d; border: 1px solid #ffffff15;
+      border-radius: 20px; overflow: hidden; transition: .3s; cursor: default;
+    }
+    .act-card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px #0005; border-color: #ffffff30; }
+    .act-card.hidden { display: none; }
+    .act-img-wrap { overflow: hidden; position: relative; }
+    .act-img {
+      width: 100%; height: 220px; object-fit: contain;
+      object-position: center center; background: #1a0040; display: block; transition: .3s;
+    }
+    .act-card:hover .act-img { transform: scale(1.05); }
+    .act-zone-badge {
+      position: absolute; top: .7rem; right: .7rem;
+      padding: .3rem .8rem; border-radius: 999px;
+      font-size: .7rem; font-weight: 900; text-transform: uppercase; letter-spacing: .08em;
+    }
+    .badge-fit  { background: #9b21c8; color: #fff; }
+    .badge-air  { background: #ff7a00; color: #fff; }
+    .badge-flow { background: #22a8ee; color: #fff; }
+    .act-body { padding: 1.1rem 1.2rem; }
+    .act-name { font-family: 'Bebas Neue'; font-size: 1.6rem; letter-spacing: .04em; margin-bottom: .3rem; }
+    .act-desc { font-size: .88rem; color: #c5b0e8; line-height: 1.6; }
+
+    /* ── PROGRAMME ── */
+    .programme { background: #fff; color: #1d1030; }
+    .programme .section-title { color: #1d1030; }
+    .coming-soon {
+      background: #f7f2fb; border-radius: 24px; padding: 3.5rem 2rem;
+      text-align: center; margin-top: 2rem; border: 2px dashed #9b21c840;
+    }
+    .coming-soon .cs-icon { font-size: 3rem; margin-bottom: .8rem; }
+    .coming-soon h3 { font-family: 'Bebas Neue'; font-size: 2.2rem; color: #1d1030; margin-bottom: .6rem; }
+    .coming-soon p { color: #5a3a7a; font-size: 1rem; line-height: 1.8; max-width: 480px; margin: 0 auto 1.4rem; }
+    .socials { display: flex; gap: .7rem; justify-content: center; flex-wrap: wrap; }
+    .soc-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .55rem 1.1rem; border-radius: 999px;
+      font-weight: 700; font-size: .82rem; transition: .2s; color: #fff;
+    }
+    .soc-btn:hover { transform: translateY(-2px); }
+    .s-ig { background: linear-gradient(135deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+    .s-fb { background: #1877f2; }
+    .s-tt { background: #010101; }
+
+    /* ── TARIFS ── */
+    .prices { background: linear-gradient(135deg, #4a0c9d, #9e18d1 45%, #ff7a00); }
+    .price-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-top: 2rem; }
+    @media(max-width: 900px) { .price-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media(max-width: 500px)  { .price-grid { grid-template-columns: 1fr; } }
+    .price-card {
+      background: #fff; color: #24103b;
+      border-radius: 28px; overflow: hidden; box-shadow: 0 22px 45px #0005;
+    }
+    .price-head { padding: 1.5rem; text-align: center; color: #fff; }
+    .price-card:nth-child(1) .price-head { background: #9b21c8; }
+    .price-card:nth-child(2) .price-head { background: #22a8ee; }
+    .price-card:nth-child(3) .price-head { background: #ff7a00; }
+    .price-card:nth-child(4) .price-head { background: #ffc928; color: #240033; }
+    .price-head h3 { margin: 0 0 .3rem; font-size: 1.1rem; font-weight: 700; }
+    .price-head .ptime { font-size: .8rem; opacity: .85; margin-bottom: .5rem; }
+    .amount { font-family: 'Bebas Neue'; font-size: 3.8rem; line-height: 1.1; }
+    .price-body { padding: 1.2rem; }
+    .price-badge {
+      display: inline-block; background: #f4c400; color: #fff;
+      font-weight: 900; padding: .3rem .6rem; border-radius: 6px;
+      margin-bottom: .8rem; font-size: .82rem;
+    }
+    .price-body ul { padding: 0; margin: 0; list-style: none; }
+    .price-body li { margin: .55rem 0; font-size: .9rem; }
+    .price-body li::before { content: "✓"; color: #f4c400; font-weight: 900; margin-right: .5rem; }
+    .helloasso-wrap { text-align: center; margin-top: 2.5rem; }
+    .helloasso-wrap p { margin-bottom: 1rem; color: #fffdf0; font-size: .9rem; }
+
+    /* ── GALLERY ── */
+    .gallery { background: #12051f; }
+    .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    @media(max-width: 768px) { .gallery-grid { grid-template-columns: 1fr 1fr; } }
+    @media(max-width: 500px)  { .gallery-grid { grid-template-columns: 1fr; } }
+    .gallery-grid img {
+      width: 100%; height: 280px; object-fit: cover; object-position: center top;
+      border-radius: 20px; box-shadow: 0 20px 50px #0007; transition: .3s; display: block;
+    }
+    .gallery-grid img:hover { transform: scale(1.03); box-shadow: 0 30px 70px #0009; }
+
+    /* ── CONTACT ── */
+    .contact { background: #fff; color: #1d1030; }
+    .contact .section-title { color: #1d1030; }
+    .contact-box {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;
+      background: #f7f2fb; border-radius: 32px; padding: 2rem;
+    }
+    @media(max-width: 768px) { .contact-box { grid-template-columns: 1fr; } }
+    .contact-box h3 { font-family: 'Bebas Neue'; font-size: 1.8rem; margin-bottom: .5rem; color: #1d1030; }
+    .contact-box strong { color: var(--purple); }
+    .contact-info-row { display: flex; align-items: center; gap: .7rem; margin: .7rem 0; color: #3a1f5a; font-weight: 600; font-size: .92rem; }
+    .c-icon { width: 34px; height: 34px; background: #9b21c820; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .contact-form { display: flex; flex-direction: column; gap: .8rem; }
+    .form-row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .8rem; }
+    @media(max-width: 500px) { .form-row2 { grid-template-columns: 1fr; } }
+    .fg { display: flex; flex-direction: column; gap: .3rem; }
+    .fg label { font-size: .8rem; font-weight: 700; color: #5a3a7a; text-transform: uppercase; letter-spacing: .05em; }
+    .fg input, .fg textarea, .fg select {
+      background: #fff; border: 2px solid #e2d4f5;
+      border-radius: .75rem; padding: .65rem .9rem; color: #1d1030;
+      font-size: .92rem; font-family: inherit; outline: none; transition: border-color .2s;
+    }
+    .fg input:focus, .fg textarea:focus, .fg select:focus { border-color: var(--purple); }
+    .fg textarea { resize: vertical; min-height: 85px; }
+    .fg select option { background: #fff; }
+    .btn-send {
+      background: linear-gradient(90deg, var(--purple), var(--pink));
+      color: #fff; font-weight: 900; font-size: .92rem;
+      padding: .85rem; border: none; border-radius: 999px;
+      cursor: pointer; transition: all .2s; text-transform: uppercase; letter-spacing: .05em;
+      box-shadow: 0 12px 30px #9b21c840;
+    }
+    .btn-send:hover { transform: translateY(-2px); box-shadow: 0 18px 40px #9b21c860; }
+
+    /* ── FOOTER ── */
+    footer { padding: 2rem; text-align: center; background: #0e0420; border-top: 1px solid #ffffff15; }
+    .footer-logo { font-family: 'Bebas Neue'; font-size: 2rem; letter-spacing: .04em; }
+    .footer-logo span { color: var(--yellow); }
+    footer p { color: #7a5fa0; font-size: .82rem; margin-top: .5rem; }
+    .footer-links { display: flex; gap: 1.5rem; justify-content: center; margin-top: .8rem; flex-wrap: wrap; }
+    .footer-links a { color: #9b7ec8; font-size: .82rem; transition: color .2s; font-weight: 600; }
+    .footer-links a:hover { color: var(--yellow); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<header>
+  <div class="container nav">
+    <div class="logo">FiTN'<span>ESTiVAL</span></div>
+    <ul class="menu">
+      <li><a href="#concept">Concept</a></li>
+      <li><a href="#activites">Activités</a></li>
+      <li><a href="#programme">Programme</a></li>
+      <li><a href="#tarifs">Tarifs</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#tarifs" class="btn btn-primary">Voir les pass</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow">Festival fitness</span>
+      <span class="edition">Édition #3</span>
+      <h1>FiTN'ESTiVAL</h1>
+      <h2>Du fun, du sport et bien + en corps</h2>
+      <p>Votre journée fitness à la carte : activités outdoor, défis, marche, flow, village bien-être et soirée musicale. Une expérience accessible à tous, portée par Marie Beaud'huin.</p>
+      <div class="date-box">
+        <div class="date-big">22</div>
+        <div class="date-info">
+          <strong>Mai 2027</strong>
+          <span>Férin, Nord (59)<br>Accueil dès 9h00</span>
+        </div>
+      </div>
+      <div class="hero-btns">
+        <a href="#tarifs" class="btn btn-primary">Voir les pass</a>
+        <a href="#activites" class="btn btn-secondary">Découvrir les activités</a>
+      </div>
+    </div>
+    <div class="hero-card">
+      <img src="img/affiche_fitn_estival_2027.jpg" alt="Affiche FiTN'ESTiVAL 2027" />
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPT -->
+<section class="concept section" id="concept">
+  <div class="container">
+    <h2 class="section-title">Le concept</h2>
+    <p class="lead">Plus qu'un événement — une journée conviviale et festive pour bouger à votre rythme, découvrir de nouvelles pratiques et profiter d'une énergie collective. Accessible à tous les niveaux.</p>
+    <div class="concept-grid">
+      <div class="concept-card">
+        <h3>🥊 Sport &amp; Défis</h3>
+        <p>Activités physiques variées : bootcamp, cardio combat, training HYROX, HIIT, total body. Des challenges pour repousser tes limites.</p>
+      </div>
+      <div class="concept-card">
+        <h3>🌿 Outdoor &amp; Collectif</h3>
+        <p>Des cours en plein air pour se dépenser en groupe dans une ambiance motivante et conviviale. Challenge équipe, renfo training, bootcamp nature.</p>
+      </div>
+      <div class="concept-card">
+        <h3>🧘 Flow &amp; Bien-être</h3>
+        <p>Méditation, pilates, yoga, mobilité, stretching et village bien-être — des ateliers pour prendre soin de soi et repartir ressourcé.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ACTIVITÉS -->
+<section class="activites section" id="activites">
+  <div class="container">
+    <h2 class="section-title">Les activités</h2>
+    <p class="lead">3 zones, 15 activités. Composez votre journée à la carte — du cardio intense au yoga doux, pour tous les goûts et tous les niveaux.</p>
+    <div class="zone-tabs">
+      <button class="zone-tab tab-all active" onclick="filterZone('all', this)">Tout voir</button>
+      <button class="zone-tab tab-fit"         onclick="filterZone('fit', this)">💜 Fit'Zone</button>
+      <button class="zone-tab tab-air"         onclick="filterZone('air', this)">🟠 Air'Zone</button>
+      <button class="zone-tab tab-flow"        onclick="filterZone('flow', this)">🔵 Flow'Zone</button>
+    </div>
+    <div class="activites-grid">
+
+      <div class="act-card" data-zone="fit">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/dance_party.jpg" alt="Dance Party" />
+          <span class="act-zone-badge badge-fit">Fit'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Dance Party</div>
+          <p class="act-desc">Laisse la musique te porter, bouge sans limites et ressens une vague d'énergie pure.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="fit">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/cardio_combat.jpg" alt="Cardio Combat" />
+          <span class="act-zone-badge badge-fit">Fit'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Cardio Combat</div>
+          <p class="act-desc">Libère ta puissance, frappe fort et réveille le combattant qui sommeille en toi.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="fit">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/cuisses_abdos_fessiers.jpg" alt="Cuisses Abdos Fessiers" />
+          <span class="act-zone-badge badge-fit">Fit'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Cuisses Abdos Fessiers</div>
+          <p class="act-desc">Fais brûler les cuisses, engage les abdos et enflamme les fessiers — toutes zones en feu.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="fit">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/training_hyrox.jpg" alt="Training HYROX" />
+          <span class="act-zone-badge badge-fit">Fit'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Training HYROX</div>
+          <p class="act-desc">Vis l'expérience Hyrox et repousse ta performance sur ce format de compétition fitness.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="fit">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/body_attack.jpg" alt="Body Attack" />
+          <span class="act-zone-badge badge-fit">Fit'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Body Attack</div>
+          <p class="act-desc">Enchaîne les mouvements et fais monter l'énergie — résultat brûlage de calories garanti.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="fit">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/total_body.jpg" alt="Total Body" />
+          <span class="act-zone-badge badge-fit">Fit'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Total Body</div>
+          <p class="act-desc">Tonifie tout le corps et sens chaque muscle travailler dans ce cours complet.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="fit">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/hiit_cardio.jpg" alt="HIIT Cardio" />
+          <span class="act-zone-badge badge-fit">Fit'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">HIIT Cardio</div>
+          <p class="act-desc">Accumule les intervalles et dépasse tes limites pour booster ton cardio au maximum.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="air">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/bootcamp.jpg" alt="Bootcamp" />
+          <span class="act-zone-badge badge-air">Air'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Challenge Bootcamp</div>
+          <p class="act-desc">Sors de ta zone de confort, repousse les frontières et révèle ton potentiel en plein air.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="air">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/challenge__quipe.jpg" alt="Challenge Équipe" />
+          <span class="act-zone-badge badge-air">Air'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Challenge Équipe</div>
+          <p class="act-desc">Relève des défis en équipe, dépasse-toi et vibre dans l'ambiance du challenge collectif.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="air">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/renfo_training.jpg" alt="Renfo Training" />
+          <span class="act-zone-badge badge-air">Air'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Renfo Training</div>
+          <p class="act-desc">Défie-toi, bouge sans limites et profite de l'énergie collective en outdoor.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="flow">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/flow_stretching.jpg" alt="Flow Stretching" />
+          <span class="act-zone-badge badge-flow">Flow'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Flow Stretching</div>
+          <p class="act-desc">Relâche les tensions, gagne en souplesse et offre-toi un profond moment de détente.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="flow">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/hatha_yoga.jpg" alt="Hatha Yoga" />
+          <span class="act-zone-badge badge-flow">Flow'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Hatha Yoga</div>
+          <p class="act-desc">Trouve l'équilibre, renforce le corps en profondeur et respire en pleine conscience.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="flow">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/m_ditation.jpg" alt="Méditation" />
+          <span class="act-zone-badge badge-flow">Flow'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Méditation</div>
+          <p class="act-desc">Apaise l'esprit, recentre-toi et cultive la sérénité dans l'instant présent.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="flow">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/pilates_flow.jpg" alt="Pilates Flow" />
+          <span class="act-zone-badge badge-flow">Flow'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Pilates Flow</div>
+          <p class="act-desc">Renforce les muscles profonds, améliore ta posture et ta stabilité.</p>
+        </div>
+      </div>
+
+      <div class="act-card" data-zone="flow">
+        <div class="act-img-wrap">
+          <img class="act-img" src="img/vinyasa_yoga.jpg" alt="Vinyasa Yoga" />
+          <span class="act-zone-badge badge-flow">Flow'Zone</span>
+        </div>
+        <div class="act-body">
+          <div class="act-name">Vinyasa Yoga</div>
+          <p class="act-desc">Respire, bouge et laisse l'énergie circuler dans ce flow yoga dynamique.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROGRAMME -->
+<section class="programme section" id="programme">
+  <div class="container">
+    <h2 class="section-title">Programme</h2>
+    <p class="lead" style="color:#5a3a7a;">Le programme complet de l'édition 2027 sera annoncé prochainement. Restez connectés !</p>
+    <div class="coming-soon">
+      <div class="cs-icon">🗓️</div>
+      <h3>Programme à venir</h3>
+      <p>Les activités, coachs et horaires de l'édition 2027 seront dévoilés bientôt.<br />Suivez-nous sur les réseaux pour ne rien manquer.</p>
+      <div class="socials">
+        <a href="https://instagram.com/fitnestival" target="_blank" class="soc-btn s-ig">📸 @fitnestival</a>
+        <a href="https://facebook.com/fitnestival2"  target="_blank" class="soc-btn s-fb">👥 Facebook</a>
+        <a href="https://tiktok.com/@fitnestival2"   target="_blank" class="soc-btn s-tt">🎵 TikTok</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TARIFS -->
+<section class="prices section" id="tarifs">
+  <div class="container">
+    <h2 class="section-title">Tarifs</h2>
+    <p class="lead">Choisissez votre formule — réservation via HelloAsso. Toutes les formules donnent accès au village bien-être.</p>
+    <div class="price-grid">
+
+      <div class="price-card">
+        <div class="price-head">
+          <h3>Pass Matin</h3>
+          <div class="ptime">7h30 → 14h45</div>
+          <div class="amount">25€</div>
+        </div>
+        <div class="price-body">
+          <ul>
+            <li>Accès tout le planning matin</li>
+            <li>Village bien-être</li>
+            <li>Restauration sur place (payante)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-head">
+          <h3>Pass Journée</h3>
+          <div class="ptime">Toute la journée</div>
+          <div class="amount">49€</div>
+        </div>
+        <div class="price-body">
+          <span class="price-badge">⭐ Populaire</span>
+          <ul>
+            <li>Accès tout le planning</li>
+            <li>Village bien-être</li>
+            <li>Soirée musicale incluse</li>
+            <li>Restauration sur place (payante)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-head">
+          <h3>Pass Après-midi / Soir</h3>
+          <div class="ptime">À partir de 12h30</div>
+          <div class="amount">29€</div>
+        </div>
+        <div class="price-body">
+          <ul>
+            <li>Accès planning après-midi</li>
+            <li>Village bien-être</li>
+            <li>Soirée musicale incluse</li>
+            <li>Restauration sur place (payante)</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="price-card">
+        <div class="price-head">
+          <h3>Pass Visiteur</h3>
+          <div class="ptime">Toute la journée</div>
+          <div class="amount">5€</div>
+        </div>
+        <div class="price-body">
+          <ul>
+            <li>Village bien-être</li>
+            <li>Soirée musicale</li>
+            <li>Boissons &amp; restauration</li>
+          </ul>
+          <p style="font-size:.78rem; color:#9b7ec8; margin-top:.8rem;">Accès sans activités sportives</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="helloasso-wrap">
+      <p>Envie de prendre votre pass ? Rendez-vous sur la page HelloAsso FiTN'ESTiVAL</p>
+      <a href="https://www.helloasso.com" target="_blank" class="btn btn-primary">🎟️ Réserver sur HelloAsso</a>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section class="gallery section">
+  <div class="container">
+    <h2 class="section-title">L'ambiance</h2>
+    <p class="lead">Un aperçu de l'énergie et des vibes du festival.</p>
+    <div class="gallery-grid">
+      <img src="img/challenge_bootcamp___ambiance_collective.jpg" alt="Challenge Bootcamp — ambiance collective" />
+      <img src="img/challenge__quipe___vibes_du_festival.jpg"     alt="Challenge Équipe — vibes du festival" />
+      <img src="img/body_attack___fun_garanti.jpg"                alt="Body Attack — fun garanti" />
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact section" id="contact">
+  <div class="container">
+    <h2 class="section-title">Contact</h2>
+    <p class="lead" style="color:#5a3a7a;">L'esprit FiTN'ESTiVAL — une question ? Besoin d'informations complémentaires ?</p>
+    <div class="contact-box">
+      <div>
+        <h3>Contactez Marie Beaud'huin</h3>
+        <div class="contact-info-row"><div class="c-icon">👩</div> Marie Beaud'huin — Porteur de projet</div>
+        <div class="contact-info-row"><div class="c-icon">📧</div> <a href="mailto:fitnestival@gmail.com" style="color:var(--purple)">fitnestival@gmail.com</a></div>
+        <div class="contact-info-row"><div class="c-icon">📍</div> Férin, Nord (59)</div>
+        <div class="contact-info-row"><div class="c-icon">📸</div> <a href="https://instagram.com/fitnestival" target="_blank" style="color:var(--purple)">@fitnestival</a></div>
+        <div class="contact-info-row"><div class="c-icon">👥</div> <a href="https://facebook.com/fitnestival2" target="_blank" style="color:var(--purple)">@fitnestival2 sur Facebook</a></div>
+        <br/>
+        <a href="https://www.helloasso.com" target="_blank" class="btn btn-primary">🎟️ Réserver sur HelloAsso</a>
+      </div>
+      <form class="contact-form" onsubmit="handleSubmit(event)">
+        <div class="form-row2">
+          <div class="fg"><label>Prénom</label><input type="text" placeholder="Alex" required /></div>
+          <div class="fg"><label>Nom</label><input type="text" placeholder="Dupont" required /></div>
+        </div>
+        <div class="fg"><label>Email</label><input type="email" placeholder="alex@email.com" required /></div>
+        <div class="fg">
+          <label>Je m'intéresse à</label>
+          <select>
+            <option>Pass Journée (49€)</option>
+            <option>Pass Matin (25€)</option>
+            <option>Pass Après-midi/Soir (29€)</option>
+            <option>Pass Visiteur (Gratuit)</option>
+            <option>Partenariat / Sponsoring</option>
+            <option>Autre question</option>
+          </select>
+        </div>
+        <div class="fg"><label>Message</label><textarea placeholder="Votre question..."></textarea></div>
+        <button type="submit" class="btn-send">Envoyer le message 💜</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">FiTN'<span>ESTiVAL</span></div>
+  <div class="footer-links">
+    <a href="#concept">Concept</a>
+    <a href="#activites">Activités</a>
+    <a href="#programme">Programme</a>
+    <a href="#tarifs">Tarifs</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <p>Samedi 22 mai 2027 · Férin, Nord (59) · Édition #3<br />© 2027 FiTN'ESTiVAL · Association Éclat &amp; Forme</p>
+</footer>
+
+<!-- ── CHATBOT MARIE ── -->
+<style>
+  #marie-btn {
+    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200;
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    border: none; cursor: pointer; box-shadow: 0 8px 30px #9b21c860;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.8rem; transition: transform .2s, box-shadow .2s;
+  }
+  #marie-btn:hover { transform: scale(1.1); box-shadow: 0 12px 40px #9b21c890; }
+  #marie-bubble {
+    position: fixed; bottom: 5.5rem; right: 1.5rem; z-index: 200;
+    width: 340px; background: #fff; border-radius: 20px;
+    box-shadow: 0 20px 60px #0007; overflow: hidden;
+    display: none; flex-direction: column;
+    border: 1px solid #e2d4f5;
+    animation: slideUp .25s ease;
+  }
+  @keyframes slideUp { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  #marie-bubble.open { display: flex; }
+  .marie-header {
+    background: linear-gradient(90deg, var(--purple), var(--pink));
+    padding: .85rem 1rem; display: flex; align-items: center; gap: .75rem;
+  }
+  .marie-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,.25); display: flex; align-items: center;
+    justify-content: center; font-size: 1.3rem; flex-shrink: 0;
+  }
+  .marie-header-info { flex: 1; }
+  .marie-header-info strong { display: block; font-weight: 800; font-size: .95rem; color: #fff; }
+  .marie-header-info span { font-size: .75rem; color: rgba(255,255,255,.8); }
+  .marie-close { background: none; border: none; color: rgba(255,255,255,.8); cursor: pointer; font-size: 1.2rem; padding: 0; }
+  #marie-messages {
+    flex: 1; overflow-y: auto; padding: 1rem; display: flex;
+    flex-direction: column; gap: .6rem; max-height: 320px;
+    background: #faf7ff;
+  }
+  .msg { max-width: 85%; padding: .65rem .9rem; border-radius: 16px; font-size: .88rem; line-height: 1.5; }
+  .msg.bot { background: #fff; color: #1d1030; border: 1px solid #e2d4f5; align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.user { background: linear-gradient(135deg, var(--purple), var(--pink)); color: #fff; align-self: flex-end; border-bottom-right-radius: 4px; }
+  .msg.bot strong { color: var(--purple); }
+  .marie-suggestions { display: flex; flex-wrap: wrap; gap: .4rem; padding: .5rem 1rem; background: #faf7ff; }
+  .sugg-btn {
+    font-size: .75rem; font-weight: 700; padding: .35rem .75rem;
+    border-radius: 999px; border: 1px solid #d4b8f5; background: #fff;
+    color: var(--purple); cursor: pointer; transition: all .15s; font-family: Montserrat, sans-serif;
+  }
+  .sugg-btn:hover { background: var(--purple); color: #fff; border-color: var(--purple); }
+  .marie-input-row {
+    display: flex; gap: .5rem; padding: .75rem; background: #fff;
+    border-top: 1px solid #f0e8ff;
+  }
+  #marie-input {
+    flex: 1; border: 1px solid #e2d4f5; border-radius: 999px;
+    padding: .55rem .9rem; font-size: .88rem; font-family: Montserrat, sans-serif;
+    outline: none; color: #1d1030; background: #faf7ff;
+  }
+  #marie-input:focus { border-color: var(--purple); }
+  #marie-send {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--purple), var(--pink));
+    border: none; cursor: pointer; color: #fff; font-size: 1rem;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    transition: transform .15s;
+  }
+  #marie-send:hover { transform: scale(1.1); }
+  .typing { display: flex; gap: 4px; align-items: center; padding: .5rem .7rem; }
+  .typing span { width: 7px; height: 7px; background: #c5b0e8; border-radius: 50%; animation: bounce .9s infinite; }
+  .typing span:nth-child(2) { animation-delay: .15s; }
+  .typing span:nth-child(3) { animation-delay: .3s; }
+  @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+</style>
+
+<button id="marie-btn" onclick="toggleMarie()" title="Parler à Marie">🤖</button>
+
+<div id="marie-bubble">
+  <div class="marie-header">
+    <div class="marie-avatar">💜</div>
+    <div class="marie-header-info">
+      <strong>Marie</strong>
+      <span>Assistante FiTN'ESTiVAL · En ligne</span>
+    </div>
+    <button class="marie-close" onclick="toggleMarie()">✕</button>
+  </div>
+  <div id="marie-messages">
+    <div class="msg bot">Bonjour ! 👋 Je suis <strong>Marie</strong>, votre assistante FiTN'ESTiVAL 2027.<br/>Comment puis-je vous aider ?</div>
+  </div>
+  <div class="marie-suggestions">
+    <button class="sugg-btn" onclick="askMarie('Les tarifs ?')">💰 Les tarifs ?</button>
+    <button class="sugg-btn" onclick="askMarie('C\'est où ?')">📍 C'est où ?</button>
+    <button class="sugg-btn" onclick="askMarie('Les activités ?')">🏃 Les activités ?</button>
+    <button class="sugg-btn" onclick="askMarie('Comment réserver ?')">🎟️ Réserver</button>
+  </div>
+  <div class="marie-input-row">
+    <input id="marie-input" type="text" placeholder="Posez votre question..." onkeydown="if(event.key==='Enter')sendMarie()" />
+    <button id="marie-send" onclick="sendMarie()">➤</button>
+  </div>
+</div>
+
+<script>
+  const chatHistory = [];
+
+  function toggleMarie() {
+    const b = document.getElementById('marie-bubble');
+    b.classList.toggle('open');
+    if (b.classList.contains('open')) document.getElementById('marie-input').focus();
+  }
+
+  async function askMarie(text) {
+    addMsg(text, 'user');
+    hideSuggestions();
+    showTyping();
+    chatHistory.push({ role: 'user', content: text });
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ messages: chatHistory }),
+      });
+      const data = await res.json();
+      const reply = data.reply || 'Désolée, je n\'ai pas pu répondre. 💜';
+      chatHistory.push({ role: 'assistant', content: reply });
+      removeTyping();
+      addMsg(reply, 'bot');
+    } catch (e) {
+      removeTyping();
+      addMsg('Oups, une erreur s\'est produite. Réessaie dans un instant 💜', 'bot');
+    }
+  }
+
+  function sendMarie() {
+    const inp = document.getElementById('marie-input');
+    const txt = inp.value.trim();
+    if (!txt) return;
+    inp.value = '';
+    askMarie(txt);
+  }
+
+  function addMsg(text, who) {
+    const div = document.createElement('div');
+    div.className = 'msg ' + who;
+    div.innerHTML = text.replace(/\n/g, '<br/>');
+    document.getElementById('marie-messages').appendChild(div);
+    scrollChat();
+  }
+
+  function showTyping() {
+    const div = document.createElement('div');
+    div.className = 'msg bot typing-wrap';
+    div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+    document.getElementById('marie-messages').appendChild(div);
+    scrollChat();
+  }
+
+  function removeTyping() {
+    const t = document.querySelector('.typing-wrap');
+    if (t) t.remove();
+  }
+
+  function hideSuggestions() {
+    document.querySelector('.marie-suggestions').style.display = 'none';
+  }
+
+  function scrollChat() {
+    const m = document.getElementById('marie-messages');
+    m.scrollTop = m.scrollHeight;
+  }
+</script>
+
+<script>
+  function filterZone(zone, btn) {
+    document.querySelectorAll('.zone-tab').forEach(b => {
+      b.classList.remove('active');
+    });
+    btn.classList.add('active');
+    document.querySelectorAll('.act-card').forEach(card => {
+      if (zone === 'all' || card.dataset.zone === zone) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+  }
+  function handleSubmit(e) {
+    e.preventDefault();
+    const btn = e.target.querySelector('.btn-send');
+    btn.textContent = '✅ Message envoyé !';
+    setTimeout(() => { btn.textContent = 'Envoyer le message 💜'; }, 3000);
+  }
+</script>
+</body>
+</html>
