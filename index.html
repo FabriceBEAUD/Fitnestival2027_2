@@ -592,6 +592,8 @@
     .footer-links a { color: #9b7ec8; font-size: .82rem; transition: color .2s; font-weight: 600; }
     .footer-links a:hover { color: var(--yellow); }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>emailjs.init('CIbA_WS4IrfxfvLwF');</script>
 </head>
 <body>
 
@@ -1788,25 +1790,24 @@
     fb.style.display = 'none';
 
     try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prenom, nom, email, interet, message }),
+      await emailjs.send('service_y3cs3ja', 'template_1a6jfwl', {
+        name: prenom + ' ' + nom,
+        email: email,
+        title: interet,
+        message: message || '(aucun message)',
       });
-      if (!res.ok) throw new Error();
       btn.textContent = '✅ Message envoyé !';
       btn.style.background = '#16a34a';
       fb.style.display = 'block';
       fb.style.color = '#16a34a';
       fb.textContent = 'Merci ' + prenom + ' ! Marie te répondra très vite 💜';
       document.getElementById('contact-form').reset();
-    } catch {
-      // Fallback local dev
-      btn.textContent = '✅ Reçu !';
-      btn.style.background = '#16a34a';
+    } catch (err) {
+      btn.textContent = '❌ Erreur envoi';
       fb.style.display = 'block';
-      fb.style.color = '#9b7ec8';
-      fb.textContent = 'En local : l\'email sera envoyé une fois sur Vercel avec RESEND_API_KEY 💜';
+      fb.style.color = '#dc2626';
+      fb.textContent = 'Une erreur est survenue, réessaie ou contacte-nous directement.';
+      console.error('EmailJS error:', err);
     }
 
     setTimeout(() => {
