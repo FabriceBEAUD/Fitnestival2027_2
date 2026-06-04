@@ -1416,6 +1416,13 @@
     object-fit: cover; object-position: center top;
     filter: saturate(1.2) contrast(1.05);
   }
+  .marie-btn-lottie {
+    position: absolute; inset: 3px;
+    border-radius: 50%; overflow: hidden;
+    z-index: 1;
+    background: linear-gradient(135deg, #2d0a5e, #5a0bb7);
+    display: flex; align-items: center; justify-content: center;
+  }
   /* Badge ⚡ animé */
   .marie-btn-badge {
     position: absolute; bottom: 1px; right: 1px;
@@ -1513,7 +1520,14 @@
 <button id="marie-btn" onclick="toggleMarie()" title="Parler à Marie">
   <div class="marie-btn-wrap">
     <div class="marie-btn-ring"></div>
-    <div class="marie-btn-photo"><img src="img/Coach/MARIE.jpg" alt="Marie" /></div>
+    <div class="marie-btn-lottie">
+      <lottie-player
+        src="https://assets2.lottiefiles.com/packages/lf20_qwL5T4.json"
+        background="transparent"
+        speed="1" loop autoplay
+        style="width:62px;height:62px;">
+      </lottie-player>
+    </div>
     <div class="marie-btn-badge">⚡</div>
   </div>
 </button>
@@ -1522,7 +1536,14 @@
   <div class="marie-header">
     <div class="marie-avatar">
       <div class="marie-avatar-ring"></div>
-      <div class="marie-avatar-photo"><img src="img/Coach/MARIE.jpg" alt="Marie" /></div>
+      <div class="marie-avatar-photo">
+        <lottie-player
+          src="https://assets2.lottiefiles.com/packages/lf20_qwL5T4.json"
+          background="transparent"
+          speed="1" loop autoplay
+          style="width:36px;height:36px;">
+        </lottie-player>
+      </div>
     </div>
     <div class="marie-header-info">
       <strong>Marie</strong>
@@ -1780,5 +1801,6 @@
     }, 5000);
   }
 </script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </body>
 </html>
