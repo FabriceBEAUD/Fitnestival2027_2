@@ -1423,6 +1423,24 @@
     background: linear-gradient(135deg, #2d0a5e, #5a0bb7);
     display: flex; align-items: center; justify-content: center;
   }
+  /* SVG cartoon animé */
+  @keyframes danceBody  { 0%,100%{transform:translateY(0) rotate(0deg)} 25%{transform:translateY(-2px) rotate(-3deg)} 75%{transform:translateY(-2px) rotate(3deg)} }
+  @keyframes swingArmL  { 0%,100%{transform-origin:14px 19px; transform:rotate(0deg)} 50%{transform-origin:14px 19px; transform:rotate(-35deg)} }
+  @keyframes swingArmR  { 0%,100%{transform-origin:26px 19px; transform:rotate(0deg)} 50%{transform-origin:26px 19px; transform:rotate(35deg)} }
+  @keyframes swingLegL  { 0%,100%{transform-origin:17px 26px; transform:rotate(0deg)} 50%{transform-origin:17px 26px; transform:rotate(20deg)} }
+  @keyframes swingLegR  { 0%,100%{transform-origin:23px 26px; transform:rotate(0deg)} 50%{transform-origin:23px 26px; transform:rotate(-20deg)} }
+  .marie-svg-avatar { width: 100%; height: 100%; }
+  .marie-svg-avatar .arm-l { animation: swingArmL .6s ease-in-out infinite; }
+  .marie-svg-avatar .arm-r { animation: swingArmR .6s ease-in-out infinite; animation-delay: .3s; }
+  .marie-svg-avatar .leg-l { animation: swingLegL .6s ease-in-out infinite; animation-delay: .3s; }
+  .marie-svg-avatar .leg-r { animation: swingLegR .6s ease-in-out infinite; }
+  .marie-btn-lottie .marie-svg-avatar { animation: danceBody .6s ease-in-out infinite; }
+  /* Avatar header chat */
+  .marie-avatar-photo {
+    position: absolute; inset: 2px; border-radius: 50%; overflow: hidden;
+    background: linear-gradient(135deg, #2d0a5e, #5a0bb7);
+    display: flex; align-items: center; justify-content: center;
+  }
   /* Badge ⚡ animé */
   .marie-btn-badge {
     position: absolute; bottom: 1px; right: 1px;
@@ -1521,12 +1539,21 @@
   <div class="marie-btn-wrap">
     <div class="marie-btn-ring"></div>
     <div class="marie-btn-lottie">
-      <lottie-player
-        src="https://assets2.lottiefiles.com/packages/lf20_qwL5T4.json"
-        background="transparent"
-        speed="1" loop autoplay
-        style="width:62px;height:62px;">
-      </lottie-player>
+      <svg class="marie-svg-avatar" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="11" r="6" fill="#fcd5a0"/>
+        <ellipse cx="20" cy="6.5" rx="6.2" ry="4" fill="#c97b3a"/>
+        <ellipse cx="14.5" cy="10" rx="2" ry="4" fill="#c97b3a"/>
+        <ellipse cx="25.5" cy="10" rx="2" ry="4" fill="#c97b3a"/>
+        <rect x="14" y="17" width="12" height="9" rx="3" fill="#ffc928"/>
+        <text x="17.5" y="24.5" font-size="7" font-family="Bebas Neue,Arial" fill="#5a0bb7" font-weight="900">F</text>
+        <line x1="17" y1="26" x2="15" y2="35" stroke="#fcd5a0" stroke-width="3" stroke-linecap="round" class="leg-l"/>
+        <line x1="23" y1="26" x2="25" y2="35" stroke="#fcd5a0" stroke-width="3" stroke-linecap="round" class="leg-r"/>
+        <line x1="14" y1="19" x2="8" y2="24" stroke="#fcd5a0" stroke-width="2.5" stroke-linecap="round" class="arm-l"/>
+        <line x1="26" y1="19" x2="32" y2="24" stroke="#fcd5a0" stroke-width="2.5" stroke-linecap="round" class="arm-r"/>
+        <circle cx="17.5" cy="10.5" r="1.2" fill="#5a0bb7"/>
+        <circle cx="22.5" cy="10.5" r="1.2" fill="#5a0bb7"/>
+        <path d="M17 13.5 Q20 16 23 13.5" stroke="#c97b3a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+      </svg>
     </div>
     <div class="marie-btn-badge">⚡</div>
   </div>
@@ -1537,12 +1564,31 @@
     <div class="marie-avatar">
       <div class="marie-avatar-ring"></div>
       <div class="marie-avatar-photo">
-        <lottie-player
-          src="https://assets2.lottiefiles.com/packages/lf20_qwL5T4.json"
-          background="transparent"
-          speed="1" loop autoplay
-          style="width:36px;height:36px;">
-        </lottie-player>
+        <svg class="marie-svg-avatar" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+          <!-- Corps -->
+          <circle cx="20" cy="11" r="6" fill="#fcd5a0"/>
+          <!-- Cheveux -->
+          <ellipse cx="20" cy="6.5" rx="6.2" ry="4" fill="#c97b3a"/>
+          <ellipse cx="14.5" cy="10" rx="2" ry="4" fill="#c97b3a"/>
+          <ellipse cx="25.5" cy="10" rx="2" ry="4" fill="#c97b3a"/>
+          <!-- Torse -->
+          <rect x="14" y="17" width="12" height="9" rx="3" fill="#ffc928"/>
+          <!-- Lettre F -->
+          <text x="17.5" y="24.5" font-size="7" font-family="Bebas Neue,Arial" fill="#5a0bb7" font-weight="900">F</text>
+          <!-- Jambe gauche -->
+          <line x1="17" y1="26" x2="15" y2="35" stroke="#fcd5a0" stroke-width="3" stroke-linecap="round" class="leg-l"/>
+          <!-- Jambe droite -->
+          <line x1="23" y1="26" x2="25" y2="35" stroke="#fcd5a0" stroke-width="3" stroke-linecap="round" class="leg-r"/>
+          <!-- Bras gauche -->
+          <line x1="14" y1="19" x2="8" y2="24" stroke="#fcd5a0" stroke-width="2.5" stroke-linecap="round" class="arm-l"/>
+          <!-- Bras droit -->
+          <line x1="26" y1="19" x2="32" y2="24" stroke="#fcd5a0" stroke-width="2.5" stroke-linecap="round" class="arm-r"/>
+          <!-- Yeux -->
+          <circle cx="17.5" cy="10.5" r="1.2" fill="#5a0bb7"/>
+          <circle cx="22.5" cy="10.5" r="1.2" fill="#5a0bb7"/>
+          <!-- Sourire -->
+          <path d="M17 13.5 Q20 16 23 13.5" stroke="#c97b3a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+        </svg>
       </div>
     </div>
     <div class="marie-header-info">
@@ -1801,6 +1847,5 @@
     }, 5000);
   }
 </script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
 </body>
 </html>
