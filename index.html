@@ -1386,16 +1386,16 @@
   }
 
   #marie-btn {
-    position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 200;
-    width: 68px; height: 68px;
+    position: fixed; bottom: .75rem; right: 1rem; z-index: 200;
+    width: 96px; height: 96px;
     border-radius: 50%; cursor: pointer; padding: 0;
     background: transparent; border: none;
     animation: avatarPulse 2.5s ease-in-out infinite;
   }
-  #marie-btn:hover { transform: scale(1.1); }
+  #marie-btn:hover { transform: scale(1.08); }
 
   .marie-btn-wrap {
-    position: relative; width: 68px; height: 68px;
+    position: relative; width: 96px; height: 96px;
   }
   /* Bordure tournante dégradée */
   .marie-btn-ring {
@@ -1420,8 +1420,14 @@
     position: absolute; inset: 3px;
     border-radius: 50%; overflow: hidden;
     z-index: 1;
-    background: linear-gradient(135deg, #2d0a5e, #5a0bb7);
+    background: #fff;
     display: flex; align-items: center; justify-content: center;
+  }
+  .marie-btn-lottie img {
+    width: 160%; height: 160%;
+    object-fit: cover;
+    object-position: center 20%;
+    margin-top: 10%;
   }
   /* SVG cartoon animé */
   @keyframes danceBody  { 0%,100%{transform:translateY(0) rotate(0deg)} 25%{transform:translateY(-2px) rotate(-2deg)} 75%{transform:translateY(-2px) rotate(2deg)} }
