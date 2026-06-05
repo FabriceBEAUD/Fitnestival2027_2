@@ -43,6 +43,27 @@
     .nav-right { display: flex; align-items: center; gap: 1rem; }
     @media(max-width: 768px) { .menu { display: none; } }
 
+    /* ── HAMBURGER ── */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: .4rem; background: none; border: none; z-index: 1001; }
+    .hamburger span { display: block; width: 26px; height: 3px; background: #fff; border-radius: 3px; transition: all .3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    @media(max-width: 768px) { .hamburger { display: flex; } }
+
+    /* ── MENU MOBILE ── */
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(14,4,32,.97);
+      flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: #fff; font-size: 1.6rem; font-weight: 900; font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: .06em; text-decoration: none; transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--yellow); }
+
     /* ── HERO ── */
     .hero {
       position: relative; min-height: calc(100vh - 72px);
@@ -643,9 +664,24 @@
     </ul>
     <div class="nav-right">
       <a href="#tarifs" class="btn btn-primary">Voir les pass</a>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </header>
+
+<!-- MENU MOBILE -->
+<nav class="mobile-menu" id="mobile-menu">
+  <a href="#concept" onclick="closeMenu()">Concept</a>
+  <a href="#activites" onclick="closeMenu()">Activités</a>
+  <a href="#programme" onclick="closeMenu()">Programme</a>
+  <a href="#tarifs" onclick="closeMenu()">Tarifs</a>
+  <a href="#coachs" onclick="closeMenu()">Coachs</a>
+  <a href="#ambiance" onclick="closeMenu()">Ambiance</a>
+  <a href="#plan" onclick="closeMenu()">Plan</a>
+  <a href="#contact" onclick="closeMenu()">Contact</a>
+</nav>
 
 <!-- HERO -->
 <section class="hero">
@@ -1804,7 +1840,18 @@
     document.getElementById('lightbox').classList.remove('open');
     document.body.style.overflow = '';
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeLightbox(); closeMenu(); } });
+
+  function toggleMenu() {
+    const menu = document.getElementById('mobile-menu');
+    const btn = document.getElementById('hamburger');
+    menu.classList.toggle('open');
+    btn.classList.toggle('open');
+  }
+  function closeMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+  }
 
   function filterZone(zone, btn) {
     document.querySelectorAll('.zone-tab').forEach(b => {
