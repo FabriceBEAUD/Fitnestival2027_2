@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fitnestival2027-2.vercel.app/sitemap.xml
