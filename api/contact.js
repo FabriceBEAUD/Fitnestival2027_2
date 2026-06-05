@@ -23,7 +23,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         from: 'FiTN\'ESTiVAL <onboarding@resend.dev>',
-        to: ['fbeaudhuin@gmail.com'],
+        to: ['fitnestival@gmail.com'],
         reply_to: email,
         subject: `📩 Nouveau message de ${prenom} ${nom} — ${interet}`,
         html: `
