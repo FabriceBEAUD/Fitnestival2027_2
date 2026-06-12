@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T-Shirt FiTN'ESTiVAL — Édition #3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --purple: #5a0bb7; --pink: #d01dd7; --orange: #ff7a00;
+      --yellow: #ffc928; --blue: #22a8ee; --dark: #16072d; --white: #fff;
+      --card-bg: rgba(255,255,255,.05); --border: rgba(255,255,255,.12);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: Montserrat, Arial, sans-serif; color: var(--white); background: var(--dark); min-height: 100vh; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1200px, 94%); margin: auto; }
+
+    /* ── NAV ── */
+    header {
+      position: sticky; top: 0; z-index: 200;
+      background: #16072ddd; backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav { height: 68px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: 'Bebas Neue'; font-size: 2rem; letter-spacing: .04em; }
+    .logo span { color: var(--yellow); }
+    .breadcrumb { display: flex; align-items: center; gap: .5rem; font-size: .82rem; color: #9980c0; }
+    .breadcrumb a:hover { color: var(--yellow); }
+    .breadcrumb .sep { opacity: .4; }
+    .breadcrumb .current { color: var(--white); font-weight: 700; }
+    @media(max-width:600px){ .breadcrumb { display:none; } }
+
+    /* ── MAIN LAYOUT ── */
+    .product-page {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      padding: 3rem 0 6rem;
+      align-items: start;
+    }
+    @media(max-width:900px){ .product-page { grid-template-columns: 1fr; gap: 2.5rem; } }
+
+    /* ══════════════════════════════════════
+       GALLERY (colonne gauche)
+    ══════════════════════════════════════ */
+    .gallery { position: sticky; top: 88px; }
+
+    /* Toggle avant / arrière */
+    .view-toggle {
+      display: flex; gap: .5rem; margin-bottom: 1rem;
+    }
+    .view-btn {
+      flex: 1; padding: .55rem; border-radius: 12px;
+      border: 1.5px solid var(--border); background: transparent;
+      color: #9980c0; font-family: Montserrat; font-weight: 700; font-size: .78rem;
+      text-transform: uppercase; letter-spacing: .1em; cursor: pointer;
+      transition: all .2s;
+    }
+    .view-btn.active {
+      background: rgba(255,255,255,.1); border-color: var(--yellow); color: var(--white);
+    }
+
+    /* Cadre image principal */
+    .main-image-wrap {
+      position: relative; border-radius: 24px; overflow: hidden;
+      background: linear-gradient(135deg, #ff38d9 0%, #6f30ff 50%, #ff7a00 100%);
+      aspect-ratio: 1;
+    }
+    .main-image-wrap img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: opacity .35s, transform .35s;
+    }
+    .main-image-wrap img.hidden { opacity: 0; position: absolute; inset: 0; pointer-events: none; }
+
+    /* Badge colour overlay */
+    .color-overlay {
+      position: absolute; inset: 0; border-radius: 24px;
+      pointer-events: none; transition: background .4s;
+      mix-blend-mode: multiply; opacity: 0;
+    }
+
+    /* Zoom hint */
+    .zoom-hint {
+      position: absolute; bottom: 14px; right: 14px;
+      background: rgba(14,4,32,.75); backdrop-filter: blur(6px);
+      border: 1px solid var(--border); border-radius: 999px;
+      padding: .35rem .8rem; font-size: .72rem; font-weight: 700;
+      color: #ccc; display: flex; align-items: center; gap: .4rem;
+    }
+
+    /* Thumbnails */
+    .thumbs { display: flex; gap: .75rem; margin-top: 1rem; }
+    .thumb {
+      width: 72px; aspect-ratio: 1; border-radius: 12px; overflow: hidden;
+      border: 2px solid transparent; cursor: pointer; transition: border-color .2s;
+      background: rgba(255,255,255,.07);
+    }
+    .thumb.active { border-color: var(--yellow); }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Lightbox */
+    .lightbox {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(8,2,20,.92); backdrop-filter: blur(10px);
+      align-items: center; justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 20px; }
+    .lightbox-close {
+      position: absolute; top: 20px; right: 24px;
+      background: none; border: none; color: #fff; font-size: 2rem; cursor: pointer;
+    }
+
+    /* ══════════════════════════════════════
+       PRODUCT INFO (colonne droite)
+    ══════════════════════════════════════ */
+    .product-info { display: flex; flex-direction: column; gap: 1.6rem; }
+
+    /* Badges */
+    .badges { display: flex; gap: .5rem; flex-wrap: wrap; }
+    .badge {
+      padding: .3rem .85rem; border-radius: 999px;
+      font-size: .72rem; font-weight: 900; text-transform: uppercase; letter-spacing: .12em;
+    }
+    .badge-edition { background: var(--orange); color: #fff; }
+    .badge-limited { background: rgba(255,201,40,.15); border: 1px solid var(--yellow); color: var(--yellow); }
+    .badge-eco { background: rgba(109,255,179,.12); border: 1px solid #6dffb3; color: #6dffb3; }
+
+    /* Title */
+    .product-title {
+      font-family: 'Bebas Neue'; font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: .9; letter-spacing: .03em;
+    }
+    .product-title em { color: var(--yellow); font-style: normal; }
+
+    /* Rating */
+    .rating { display: flex; align-items: center; gap: .6rem; }
+    .stars { color: var(--yellow); font-size: 1.1rem; letter-spacing: .05em; }
+    .rating-count { font-size: .82rem; color: #9980c0; }
+    .rating-count a:hover { color: var(--yellow); }
+
+    /* Price */
+    .price-row { display: flex; align-items: baseline; gap: 1rem; }
+    .price-main { font-family: 'Bebas Neue'; font-size: 3.2rem; color: var(--yellow); }
+    .price-sub { font-size: .82rem; color: #9980c0; }
+
+    /* Divider */
+    .divider { border: none; border-top: 1px solid var(--border); }
+
+    /* Color selector */
+    .selector-label {
+      font-size: .8rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: .15em; color: #9980c0; margin-bottom: .75rem;
+    }
+    .selector-label span { color: var(--white); }
+
+    .color-swatches { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .swatch {
+      width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+      border: 3px solid transparent; transition: all .2s;
+      position: relative; box-shadow: 0 4px 12px #0004;
+    }
+    .swatch:hover { transform: scale(1.1); }
+    .swatch.active { border-color: var(--white); }
+    .swatch.active::after {
+      content: '✓'; position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .9rem; font-weight: 900;
+      color: rgba(255,255,255,.9); text-shadow: 0 1px 3px #0007;
+    }
+    .swatch[data-color="rose"]  { background: #ff3ea5; }
+    .swatch[data-color="noir"]  { background: #1a1a2e; border-color: #444; }
+    .swatch[data-color="blanc"] { background: #f0f0f0; }
+    .swatch[data-color="violet"]{ background: #5a0bb7; }
+
+    /* Size selector */
+    .size-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .75rem; }
+    .size-guide-btn {
+      font-size: .78rem; font-weight: 700; color: var(--blue);
+      background: none; border: none; cursor: pointer; text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .size-grid { display: flex; gap: .6rem; flex-wrap: wrap; }
+    .size-btn {
+      min-width: 52px; padding: .6rem .5rem; border-radius: 10px;
+      border: 1.5px solid var(--border); background: transparent;
+      color: var(--white); font-family: Montserrat; font-weight: 700; font-size: .88rem;
+      cursor: pointer; transition: all .2s; text-align: center;
+    }
+    .size-btn:hover:not(.out) { border-color: rgba(255,255,255,.5); background: rgba(255,255,255,.07); }
+    .size-btn.active { border-color: var(--yellow); background: rgba(255,201,40,.12); color: var(--yellow); }
+    .size-btn.out {
+      opacity: .3; cursor: not-allowed;
+      background: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,.06) 4px, rgba(255,255,255,.06) 8px);
+    }
+    .size-error { color: #ff6b6b; font-size: .82rem; font-weight: 700; display: none; }
+
+    /* Quantity */
+    .qty-row { display: flex; align-items: center; gap: 1rem; }
+    .qty-ctrl {
+      display: flex; align-items: center; gap: 0;
+      border: 1.5px solid var(--border); border-radius: 12px; overflow: hidden;
+    }
+    .qty-btn {
+      width: 44px; height: 44px; background: rgba(255,255,255,.06);
+      border: none; color: var(--white); font-size: 1.3rem; cursor: pointer;
+      transition: background .15s; font-family: Montserrat;
+    }
+    .qty-btn:hover { background: rgba(255,255,255,.14); }
+    .qty-val {
+      width: 48px; text-align: center; font-weight: 900; font-size: 1rem;
+      background: transparent; border: none; color: var(--white);
+      font-family: Montserrat;
+    }
+    .qty-note { font-size: .78rem; color: #6dffb3; font-weight: 700; }
+
+    /* CTA */
+    .cta-group { display: flex; gap: .75rem; }
+    .btn-cart {
+      flex: 1; padding: 1.1rem; border-radius: 16px; border: none; cursor: pointer;
+      background: linear-gradient(90deg, var(--yellow), var(--orange));
+      color: #240033; font-family: Montserrat; font-weight: 900;
+      font-size: 1rem; text-transform: uppercase; letter-spacing: .08em;
+      display: flex; align-items: center; justify-content: center; gap: .6rem;
+      transition: all .2s; position: relative; overflow: hidden;
+    }
+    .btn-cart:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(255,122,0,.4); }
+    .btn-cart.loading { pointer-events: none; }
+    .btn-cart .spinner {
+      display: none; width: 20px; height: 20px; border: 2.5px solid rgba(36,0,51,.3);
+      border-top-color: #240033; border-radius: 50%; animation: spin .6s linear infinite;
+    }
+    .btn-cart.loading .spinner { display: block; }
+    .btn-cart.loading .btn-label { display: none; }
+    .btn-cart.success { background: linear-gradient(90deg, #6dffb3, #00c9a7); pointer-events: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-wishlist {
+      width: 56px; height: 56px; border-radius: 16px;
+      border: 1.5px solid var(--border); background: rgba(255,255,255,.05);
+      color: #9980c0; font-size: 1.4rem; cursor: pointer; transition: all .2s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .btn-wishlist:hover { border-color: #ff6b9d; color: #ff6b9d; background: rgba(255,107,157,.08); }
+    .btn-wishlist.saved { border-color: #ff6b9d; color: #ff6b9d; background: rgba(255,107,157,.1); }
+
+    /* Trust badges */
+    .trust-badges {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: .75rem;
+    }
+    .trust-item {
+      display: flex; flex-direction: column; align-items: center; gap: .35rem;
+      padding: .9rem .5rem; border-radius: 14px;
+      border: 1px solid var(--border); background: var(--card-bg);
+      text-align: center;
+    }
+    .trust-icon { font-size: 1.4rem; }
+    .trust-label { font-size: .72rem; font-weight: 700; color: #9980c0; line-height: 1.3; }
+
+    /* Accordion */
+    .accordion { display: flex; flex-direction: column; gap: .5rem; }
+    .acc-item { border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+    .acc-header {
+      width: 100%; padding: 1rem 1.2rem; background: var(--card-bg);
+      border: none; color: var(--white); font-family: Montserrat; font-weight: 700;
+      font-size: .9rem; display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; transition: background .2s;
+    }
+    .acc-header:hover { background: rgba(255,255,255,.08); }
+    .acc-arrow { transition: transform .25s; font-size: .75rem; color: #9980c0; }
+    .acc-item.open .acc-arrow { transform: rotate(180deg); }
+    .acc-body { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+    .acc-item.open .acc-body { max-height: 400px; }
+    .acc-content {
+      padding: 1rem 1.2rem 1.3rem; font-size: .88rem; color: #b8a8d4; line-height: 1.7;
+    }
+    .acc-content ul { padding-left: 1.2rem; }
+    .acc-content li { margin-bottom: .3rem; }
+    .acc-content table { width: 100%; border-collapse: collapse; margin-top: .5rem; }
+    .acc-content th, .acc-content td {
+      padding: .5rem .75rem; text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,.08); font-size: .82rem;
+    }
+    .acc-content th { color: var(--white); font-weight: 700; }
+
+    /* ── SIZE GUIDE MODAL ── */
+    .modal {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(8,2,20,.85); backdrop-filter: blur(10px);
+      align-items: center; justify-content: center; padding: 1rem;
+    }
+    .modal.open { display: flex; }
+    .modal-box {
+      background: #1e0d3e; border: 1px solid var(--border); border-radius: 24px;
+      padding: 2rem; max-width: 560px; width: 100%; position: relative;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .modal-close {
+      position: absolute; top: 16px; right: 20px;
+      background: none; border: none; color: #9980c0; font-size: 1.4rem; cursor: pointer;
+    }
+    .modal-title {
+      font-family: 'Bebas Neue'; font-size: 2rem; margin-bottom: 1.2rem;
+    }
+    .modal-title span { color: var(--yellow); }
+    .size-table { width: 100%; border-collapse: collapse; font-size: .84rem; }
+    .size-table th { background: rgba(255,255,255,.07); padding: .6rem .75rem; font-weight: 700; text-align: center; }
+    .size-table td { padding: .55rem .75rem; text-align: center; border-bottom: 1px solid var(--border); color: #b8a8d4; }
+    .size-table tr:hover td { background: rgba(255,255,255,.04); }
+    .modal-note { font-size: .78rem; color: #7a6a9a; margin-top: 1rem; line-height: 1.6; }
+
+    /* ── STICKY MOBILE BAR ── */
+    .sticky-bar {
+      display: none; position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+      background: rgba(14,4,32,.97); backdrop-filter: blur(16px);
+      border-top: 1px solid var(--border); padding: .9rem 1rem;
+      flex-direction: column; gap: .5rem;
+    }
+    .sticky-bar-top { display: flex; align-items: center; justify-content: space-between; }
+    .sticky-price { font-family: 'Bebas Neue'; font-size: 2rem; color: var(--yellow); }
+    .sticky-name { font-size: .8rem; color: #9980c0; }
+    .sticky-cta {
+      width: 100%; padding: 1rem; border-radius: 14px; border: none; cursor: pointer;
+      background: linear-gradient(90deg, var(--yellow), var(--orange));
+      color: #240033; font-family: Montserrat; font-weight: 900;
+      font-size: 1rem; text-transform: uppercase; letter-spacing: .06em;
+      transition: all .2s;
+    }
+    @media(max-width:900px){ .sticky-bar { display: flex; } body { padding-bottom: 140px; } }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #1e0d3e; border: 1px solid var(--yellow); border-radius: 14px;
+      padding: .9rem 1.5rem; font-weight: 700; font-size: .9rem;
+      display: flex; align-items: center; gap: .6rem;
+      opacity: 0; transition: all .3s; pointer-events: none; z-index: 400; white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ── BACK LINK ── */
+    .back-link {
+      display: inline-flex; align-items: center; gap: .4rem;
+      color: #9980c0; font-size: .82rem; font-weight: 700;
+      margin-bottom: 1.5rem; transition: color .2s;
+    }
+    .back-link:hover { color: var(--yellow); }
+
+    /* ── RECENTLY VIEWED ── */
+    .related { padding: 4rem 0; border-top: 1px solid var(--border); }
+    .related h3 { font-family: 'Bebas Neue'; font-size: 2rem; margin-bottom: 1.5rem; }
+    .related h3 span { color: var(--yellow); }
+    .related-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.2rem; }
+    .related-card {
+      border: 1px solid var(--border); border-radius: 18px; overflow: hidden;
+      background: var(--card-bg); transition: transform .2s, box-shadow .2s;
+    }
+    .related-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px #0004; }
+    .related-visual { height: 180px; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+    .related-visual.cap   { background: linear-gradient(135deg, #ff7a00, #ffc928); }
+    .related-visual.bottle{ background: linear-gradient(135deg, #22a8ee, #5a0bb7); }
+    .related-body { padding: 1rem; }
+    .related-name { font-family: 'Bebas Neue'; font-size: 1.4rem; }
+    .related-price { font-size: .88rem; color: var(--yellow); font-weight: 700; margin-top: .2rem; }
+    .related-cta {
+      display: block; margin-top: .75rem; text-align: center;
+      padding: .55rem; border-radius: 10px; border: 1px solid var(--border);
+      font-size: .78rem; font-weight: 700; text-transform: uppercase;
+      color: #9980c0; transition: all .2s;
+    }
+    .related-cta:hover { border-color: var(--yellow); color: var(--yellow); background: rgba(255,201,40,.06); }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="logo">FiTN'<span>ESTi</span>VAL</a>
+      <div class="breadcrumb">
+        <a href="index.html">Accueil</a>
+        <span class="sep">/</span>
+        <a href="boutique.html">Boutique</a>
+        <span class="sep">/</span>
+        <span class="current">T-Shirt Festival</span>
+      </div>
+      <a href="boutique.html" style="font-size:.82rem;font-weight:700;color:#9980c0;display:flex;align-items:center;gap:.3rem;">← Boutique</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── MAIN ── -->
+<main class="container">
+  <div class="product-page">
+
+    <!-- ═══ GALLERY ═══ -->
+    <div class="gallery">
+      <div class="view-toggle">
+        <button class="view-btn active" data-view="front" onclick="switchView('front', this)">Avant</button>
+        <button class="view-btn" data-view="back" onclick="switchView('back', this)">Arrière</button>
+      </div>
+
+      <div class="main-image-wrap" id="mainImageWrap" onclick="openLightbox()">
+        <!-- Remplace ces src par tes vraies images :
+             img/tshirt-avant.jpg  et  img/tshirt-arriere.jpg -->
+        <img id="imgFront"
+             src="img/tshirt-avant.jpg"
+             onerror="this.style.display='none';document.getElementById('fallbackFront').style.display='flex'"
+             alt="T-Shirt FiTN'ESTiVAL – face avant" style="width:100%;height:100%;object-fit:cover;" />
+        <div id="fallbackFront" style="display:none;width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:2rem;text-align:center;">
+          <div style="font-size:8rem;">👕</div>
+          <div style="font-family:'Bebas Neue';font-size:1.8rem;color:rgba(255,255,255,.6);">Face avant</div>
+          <div style="font-size:.8rem;color:rgba(255,255,255,.4);">Place ton image dans img/tshirt-avant.jpg</div>
+        </div>
+
+        <img id="imgBack"
+             src="img/tshirt-arriere.jpg"
+             onerror="this.style.display='none';document.getElementById('fallbackBack').style.display='flex'"
+             alt="T-Shirt FiTN'ESTiVAL – face arrière"
+             style="width:100%;height:100%;object-fit:cover;display:none;position:absolute;inset:0;" />
+        <div id="fallbackBack" style="display:none;position:absolute;inset:0;width:100%;height:100%;align-items:center;justify-content:center;flex-direction:column;gap:1rem;padding:2rem;text-align:center;">
+          <div style="font-size:8rem;">🎽</div>
+          <div style="font-family:'Bebas Neue';font-size:1.8rem;color:rgba(255,255,255,.6);">Face arrière</div>
+          <div style="font-size:.8rem;color:rgba(255,255,255,.4);">Place ton image dans img/tshirt-arriere.jpg</div>
+        </div>
+
+        <div class="color-overlay" id="colorOverlay"></div>
+        <div class="zoom-hint">🔍 Clic pour zoomer</div>
+      </div>
+
+      <div class="thumbs">
+        <div class="thumb active" onclick="switchThumb('front', this)">
+          <img src="img/tshirt-avant.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;\'>👕</div>'" alt="Avant" />
+        </div>
+        <div class="thumb" onclick="switchThumb('back', this)">
+          <img src="img/tshirt-arriere.jpg" onerror="this.style.display='none';this.parentNode.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;\'>🎽</div>'" alt="Arrière" />
+        </div>
+        <div class="thumb" onclick="switchThumb('detail', this)" style="background:linear-gradient(135deg,#ff38d9,#6f30ff);">
+          <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;">✨</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PRODUCT INFO ═══ -->
+    <div class="product-info">
+
+      <div class="badges">
+        <span class="badge badge-edition">Édition #3</span>
+        <span class="badge badge-limited">Série limitée</span>
+        <span class="badge badge-eco">Coton bio</span>
+      </div>
+
+      <h1 class="product-title">T-Shirt<br><em>FiTN'EStiVAL</em></h1>
+
+      <div class="rating">
+        <div class="stars">★★★★★</div>
+        <div class="rating-count"><a href="#avis">48 avis</a></div>
+      </div>
+
+      <div class="price-row">
+        <div class="price-main">25 €</div>
+        <div class="price-sub">Port offert dès 50 € · Retours gratuits 30j</div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Couleur -->
+      <div>
+        <p class="selector-label">Couleur : <span id="colorName">Rose fluo</span></p>
+        <div class="color-swatches">
+          <div class="swatch active" data-color="rose" data-label="Rose fluo" title="Rose fluo" onclick="selectColor(this)"></div>
+          <div class="swatch" data-color="noir" data-label="Noir minuit" title="Noir minuit" onclick="selectColor(this)"></div>
+          <div class="swatch" data-color="blanc" data-label="Blanc" title="Blanc" onclick="selectColor(this)"></div>
+          <div class="swatch" data-color="violet" data-label="Violet festival" title="Violet festival" onclick="selectColor(this)"></div>
+        </div>
+      </div>
+
+      <!-- Taille -->
+      <div>
+        <div class="size-header">
+          <p class="selector-label" style="margin:0">Taille : <span id="sizeName">— choisir —</span></p>
+          <button class="size-guide-btn" onclick="openModal()">Guide des tailles</button>
+        </div>
+        <div class="size-grid">
+          <button class="size-btn" data-size="XS" onclick="selectSize(this)">XS</button>
+          <button class="size-btn" data-size="S"  onclick="selectSize(this)">S</button>
+          <button class="size-btn" data-size="M"  onclick="selectSize(this)">M</button>
+          <button class="size-btn" data-size="L"  onclick="selectSize(this)">L</button>
+          <button class="size-btn" data-size="XL" onclick="selectSize(this)">XL</button>
+          <button class="size-btn out" data-size="XXL" onclick="selectSize(this)">XXL</button>
+        </div>
+        <p class="size-error" id="sizeError">⚠ Sélectionne une taille pour continuer</p>
+      </div>
+
+      <!-- Quantité -->
+      <div>
+        <p class="selector-label">Quantité</p>
+        <div class="qty-row">
+          <div class="qty-ctrl">
+            <button class="qty-btn" onclick="changeQty(-1)">−</button>
+            <span class="qty-val" id="qtyVal">1</span>
+            <button class="qty-btn" onclick="changeQty(1)">+</button>
+          </div>
+          <span class="qty-note">✓ En stock</span>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <div class="cta-group">
+        <button class="btn-cart" id="btnCart" onclick="addToCart()">
+          <span class="btn-label">🛒 Ajouter au panier</span>
+          <div class="spinner"></div>
+        </button>
+        <button class="btn-wishlist" id="btnWish" onclick="toggleWish(this)" title="Sauvegarder">♡</button>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="trust-badges">
+        <div class="trust-item">
+          <div class="trust-icon">🚚</div>
+          <div class="trust-label">Livraison offerte dès 50 €</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">↩</div>
+          <div class="trust-label">Retour gratuit sous 30 jours</div>
+        </div>
+        <div class="trust-item">
+          <div class="trust-icon">🌿</div>
+          <div class="trust-label">Coton bio certifié GOTS</div>
+        </div>
+      </div>
+
+      <hr class="divider" />
+
+      <!-- Accordion -->
+      <div class="accordion">
+        <div class="acc-item open">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            Composition &amp; entretien
+            <span class="acc-arrow">▼</span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-content">
+              <ul>
+                <li>100 % coton biologique certifié GOTS</li>
+                <li>180 g/m² — coupe unisexe légèrement oversize</li>
+                <li>Impression DTG (Direct to Garment) haute définition</li>
+                <li>Broderie logo sur la poitrine gauche</li>
+                <li>Lavage machine 30 °C à l'envers · Ne pas sécher en machine</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            Livraison &amp; retours
+            <span class="acc-arrow">▼</span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-content">
+              <ul>
+                <li><strong>Expédition :</strong> 3–5 jours ouvrés</li>
+                <li><strong>Colissimo :</strong> 4,90 € · Offert dès 50 €</li>
+                <li><strong>Retours :</strong> gratuits sous 30 jours, article non porté</li>
+                <li>Remboursement sous 5–7 jours après réception</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-header" onclick="toggleAcc(this)">
+            Guide des tailles
+            <span class="acc-arrow">▼</span>
+          </button>
+          <div class="acc-body">
+            <div class="acc-content">
+              <table>
+                <tr><th>Taille</th><th>Tour de poitrine</th><th>Longueur</th><th>Épaule</th></tr>
+                <tr><td>XS</td><td>84–88 cm</td><td>66 cm</td><td>40 cm</td></tr>
+                <tr><td>S</td><td>88–92 cm</td><td>68 cm</td><td>42 cm</td></tr>
+                <tr><td>M</td><td>92–96 cm</td><td>70 cm</td><td>44 cm</td></tr>
+                <tr><td>L</td><td>100–104 cm</td><td>72 cm</td><td>46 cm</td></tr>
+                <tr><td>XL</td><td>108–112 cm</td><td>74 cm</td><td>48 cm</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── RELATED ── -->
+  <div class="related">
+    <h3>Complète ta <span>tenue</span></h3>
+    <div class="related-grid">
+      <div class="related-card">
+        <div class="related-visual cap">🧢</div>
+        <div class="related-body">
+          <div class="related-name">Casquette FiTN</div>
+          <div class="related-price">22 €</div>
+          <a href="boutique.html" class="related-cta">Voir le produit</a>
+        </div>
+      </div>
+      <div class="related-card">
+        <div class="related-visual bottle">🥤</div>
+        <div class="related-body">
+          <div class="related-name">Gourde Inox</div>
+          <div class="related-price">28 €</div>
+          <a href="boutique.html" class="related-cta">Voir le produit</a>
+        </div>
+      </div>
+      <div class="related-card" style="background:linear-gradient(135deg,rgba(255,56,217,.08),rgba(111,48,255,.08));border-color:rgba(255,201,40,.2);">
+        <div class="related-visual" style="background:linear-gradient(135deg,#ffc928,#ff7a00);">🎟</div>
+        <div class="related-body">
+          <div class="related-name">Pass Festival</div>
+          <div class="related-price">Dès 15 €</div>
+          <a href="index.html#billetterie" class="related-cta">Réserver</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ── STICKY MOBILE BAR ── -->
+<div class="sticky-bar">
+  <div class="sticky-bar-top">
+    <div>
+      <div class="sticky-name">T-Shirt FiTN'ESTiVAL</div>
+      <div class="sticky-price">25 €</div>
+    </div>
+    <div style="font-size:.78rem;color:#9980c0;" id="mobileSelectedInfo">—</div>
+  </div>
+  <button class="sticky-cta" onclick="addToCart()">🛒 Ajouter au panier</button>
+</div>
+
+<!-- ── SIZE GUIDE MODAL ── -->
+<div class="modal" id="sizeModal" onclick="closeModal(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModalDirect()">✕</button>
+    <h2 class="modal-title">Guide des <span>tailles</span></h2>
+    <p style="font-size:.85rem;color:#9980c0;margin-bottom:1.2rem;">Mesure-toi sans vêtement. En cas de doute entre deux tailles, prends la plus grande.</p>
+    <table class="size-table">
+      <thead>
+        <tr><th>Taille</th><th>Poitrine</th><th>Longueur</th><th>Épaule</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>XS</td><td>84–88 cm</td><td>66 cm</td><td>40 cm</td></tr>
+        <tr><td>S</td><td>88–92 cm</td><td>68 cm</td><td>42 cm</td></tr>
+        <tr><td>M</td><td>92–96 cm</td><td>70 cm</td><td>44 cm</td></tr>
+        <tr><td>L</td><td>100–104 cm</td><td>72 cm</td><td>46 cm</td></tr>
+        <tr><td>XL</td><td>108–112 cm</td><td>74 cm</td><td>48 cm</td></tr>
+        <tr style="opacity:.4"><td>XXL</td><td>116–120 cm</td><td>76 cm</td><td>50 cm</td></tr>
+      </tbody>
+    </table>
+    <p class="modal-note">ℹ️ Coupe légèrement oversize. Pour un fit plus ajusté, prends une taille en dessous.</p>
+  </div>
+</div>
+
+<!-- ── LIGHTBOX ── -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightboxImg" src="" alt="" />
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">🛒 Ajouté au panier !</div>
+
+<script>
+  /* ── State ── */
+  let currentView = 'front';
+  let selectedColor = 'rose';
+  let selectedSize = null;
+  let qty = 1;
+
+  /* ── View toggle ── */
+  function switchView(view, btn) {
+    currentView = view;
+    document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    updateImages();
+    updateThumbs();
+  }
+
+  function switchThumb(view, thumb) {
+    currentView = view === 'detail' ? 'front' : view;
+    updateImages();
+    document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+    thumb.classList.add('active');
+    document.querySelectorAll('.view-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.view === currentView);
+    });
+  }
+
+  function updateImages() {
+    const front = document.getElementById('imgFront');
+    const back  = document.getElementById('imgBack');
+    const fbF   = document.getElementById('fallbackFront');
+    const fbB   = document.getElementById('fallbackBack');
+    if (currentView === 'front') {
+      if (front.src) { front.style.display = ''; back && (back.style.display = 'none'); }
+      fbF && (fbF.style.display = fbF.children.length && front.style.display === 'none' ? 'flex' : '');
+      fbB && (fbB.style.display = 'none');
+    } else {
+      front.style.display = 'none';
+      fbF && (fbF.style.display = 'none');
+      if (back) back.style.display = '';
+    }
+  }
+
+  function updateThumbs() {
+    const thumbs = document.querySelectorAll('.thumb');
+    thumbs.forEach((t, i) => {
+      t.classList.toggle('active',
+        (currentView === 'front' && i === 0) || (currentView === 'back' && i === 1)
+      );
+    });
+  }
+
+  /* ── Color ── */
+  const colorMap = {
+    rose:   { label: 'Rose fluo',      overlay: null },
+    noir:   { label: 'Noir minuit',    overlay: 'rgba(5,0,15,.55)' },
+    blanc:  { label: 'Blanc',          overlay: 'rgba(240,235,255,.4)' },
+    violet: { label: 'Violet festival',overlay: 'rgba(60,0,120,.45)' },
+  };
+
+  function selectColor(el) {
+    document.querySelectorAll('.swatch').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    selectedColor = el.dataset.color;
+    document.getElementById('colorName').textContent = colorMap[selectedColor].label;
+    const overlay = document.getElementById('colorOverlay');
+    const col = colorMap[selectedColor].overlay;
+    if (col) { overlay.style.background = col; overlay.style.opacity = '1'; }
+    else      { overlay.style.opacity = '0'; }
+    updateMobileInfo();
+  }
+
+  /* ── Size ── */
+  function selectSize(btn) {
+    if (btn.classList.contains('out')) return;
+    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedSize = btn.dataset.size;
+    document.getElementById('sizeName').textContent = selectedSize;
+    document.getElementById('sizeError').style.display = 'none';
+    updateMobileInfo();
+  }
+
+  /* ── Qty ── */
+  function changeQty(delta) {
+    qty = Math.max(1, Math.min(10, qty + delta));
+    document.getElementById('qtyVal').textContent = qty;
+  }
+
+  /* ── Mobile info ── */
+  function updateMobileInfo() {
+    const info = document.getElementById('mobileSelectedInfo');
+    const parts = [];
+    if (selectedColor) parts.push(colorMap[selectedColor].label);
+    if (selectedSize)  parts.push(selectedSize);
+    info.textContent = parts.length ? parts.join(' · ') : '—';
+  }
+
+  /* ── Add to cart ── */
+  function addToCart() {
+    if (!selectedSize) {
+      document.getElementById('sizeError').style.display = 'block';
+      document.querySelector('.size-grid').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    const btn = document.getElementById('btnCart');
+    btn.classList.add('loading');
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      btn.classList.add('success');
+      btn.querySelector('.btn-label').style.display = '';
+      btn.querySelector('.btn-label').textContent = '✓ Ajouté !';
+      showToast();
+      setTimeout(() => {
+        btn.classList.remove('success');
+        btn.querySelector('.btn-label').textContent = '🛒 Ajouter au panier';
+      }, 2800);
+    }, 900);
+  }
+
+  function showToast() {
+    const t = document.getElementById('toast');
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  /* ── Wishlist ── */
+  function toggleWish(btn) {
+    btn.classList.toggle('saved');
+    btn.textContent = btn.classList.contains('saved') ? '♥' : '♡';
+  }
+
+  /* ── Accordion ── */
+  function toggleAcc(header) {
+    const item = header.parentElement;
+    item.classList.toggle('open');
+  }
+
+  /* ── Size modal ── */
+  function openModal() { document.getElementById('sizeModal').classList.add('open'); }
+  function closeModalDirect() { document.getElementById('sizeModal').classList.remove('open'); }
+  function closeModal(e) { if (e.target === document.getElementById('sizeModal')) closeModalDirect(); }
+
+  /* ── Lightbox ── */
+  function openLightbox() {
+    const src = currentView === 'front'
+      ? document.getElementById('imgFront').src
+      : document.getElementById('imgBack').src;
+    document.getElementById('lightboxImg').src = src;
+    document.getElementById('lightbox').classList.add('open');
+  }
+  function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+  /* ── Keyboard ── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModalDirect(); closeLightbox(); }
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background:#111;
+    display:flex; align-items:center; justify-content:center;
+    min-height:100vh; padding:20px;
+  }
+
+  .poster {
+    width: 600px;
+    background: #e8007e;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 40px 100px #00000088;
+  }
+
+  /* ── HERO ZONE ── */
+  .hero {
+    position: relative;
+    padding: 36px 30px 20px;
+    overflow: hidden;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* Blob coloré */
+  .blob {
+    position: absolute;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+    width: 580px; height: 220px;
+  }
+
+  /* Badge édition */
+  .badge {
+    position: absolute;
+    top: 16px; left: 20px;
+    width: 68px; height: 68px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+    background: rgba(232,0,126,0.7);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    z-index: 10;
+  }
+  .badge span:first-child { font-size: 9px; font-weight:600; color:white; letter-spacing:1px; }
+  .badge span:last-child  { font-family:'Bebas Neue'; font-size:26px; color:white; line-height:1; }
+
+  /* Titre principal */
+  .title-wrap {
+    position: relative;
+    z-index: 10;
+    margin-top: 60px;
+    text-align: center;
+  }
+  .title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 92px;
+    line-height: 0.9;
+    color: white;
+    letter-spacing: 1px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.5));
+  }
+  .title .small-i { font-size: 58px; }
+
+  /* Bandeau */
+  .bandeau {
+    position: relative; z-index:10;
+    background: linear-gradient(90deg, #F98037, #FCBA2B);
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 5px;
+    padding: 8px 28px;
+    margin-top: 8px;
+    border-radius: 3px;
+  }
+
+  /* ── DATE ── */
+  .date-section {
+    background: #c5006a;
+    padding: 18px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+  }
+  .date-num {
+    font-family: 'Bebas Neue';
+    font-size: 88px;
+    color: white;
+    line-height: 1;
+    filter: drop-shadow(0 2px 8px #0005);
+  }
+  .date-info { color:white; }
+  .date-info .month { font-size:30px; font-weight:900; line-height:1; }
+  .date-info .year  { font-size:22px; font-weight:700; opacity:.85; }
+  .date-info .lieu  { font-size:13px; font-weight:600; opacity:.8; margin-top:4px; letter-spacing:1px; }
+  .samedi-label {
+    font-size: 11px; font-weight:700; letter-spacing:4px;
+    color:rgba(255,255,255,0.7); text-transform:uppercase;
+    text-align:center; padding: 6px 0 0;
+    background:#c5006a;
+  }
+
+  /* ── ACTIVITES ── */
+  .activites {
+    padding: 22px 24px 16px;
+    background: #e8007e;
+  }
+  .section-label {
+    text-align:center;
+    font-size:11px; font-weight:700; letter-spacing:4px;
+    color:rgba(255,255,255,0.65); margin-bottom:14px;
+    text-transform:uppercase;
+  }
+  .zones {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .zone {
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    color: white;
+  }
+  .zone.fit  { background: rgba(100,0,180,0.55); border:1px solid rgba(180,100,255,0.4); }
+  .zone.air  { background: rgba(249,128,55,0.35); border:1px solid rgba(249,128,55,0.5); }
+  .zone.flow { background: rgba(57,172,252,0.3);  border:1px solid rgba(57,172,252,0.5); }
+  .zone-icon  { font-size:26px; margin-bottom:4px; }
+  .zone-name  { font-family:'Bebas Neue'; font-size:22px; letter-spacing:1px; }
+  .zone-desc  { font-size:9.5px; opacity:.8; margin-top:3px; line-height:1.4; }
+
+  /* ── PASS ── */
+  .pass-section {
+    padding: 16px 24px;
+    background: rgba(0,0,0,0.15);
+  }
+  .pass-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .pass-card {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: white;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .pass-card.featured {
+    background: linear-gradient(135deg, #FCBA2B22, #F9803722);
+    border-color: #FCBA2B88;
+  }
+  .pass-name { font-size:13px; font-weight:700; }
+  .pass-sub  { font-size:10px; opacity:.7; margin-top:1px; }
+  .pass-price {
+    font-family:'Bebas Neue'; font-size:30px; color:#FCBA2B;
+    line-height:1;
+  }
+  .pass-card.featured .pass-price { color:#FCBA2B; font-size:34px; }
+  .star { font-size:9px; color:#FCBA2B; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: rgba(0,0,0,0.25);
+    padding: 16px 24px;
+    display:flex; align-items:center; justify-content:space-between;
+    flex-wrap:wrap; gap:10px;
+  }
+  .footer-logo {
+    font-family:'Bebas Neue'; font-size:22px; color:white; letter-spacing:1px;
+  }
+  .footer-logo span { color:#FCBA2B; }
+  .socials { display:flex; gap:8px; flex-wrap:wrap; }
+  .soc { font-size:10px; color:white; background:rgba(255,255,255,0.15);
+         border-radius:20px; padding:4px 10px; font-weight:600; }
+  .helloasso {
+    width:100%; text-align:center;
+    font-size:11px; color:rgba(255,255,255,0.7);
+    border-top:1px solid rgba(255,255,255,0.15); padding-top:12px; margin-top:4px;
+  }
+  .helloasso strong { color:white; }
+</style>
+</head><body>
+
+<div class="poster">
+
+  <!-- HERO -->
+  <div class="hero">
+    <!-- Blob SVG coloré -->
+    <svg class="blob" viewBox="0 0 580 220" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="b1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stop-color="#39ACFC"/>
+          <stop offset="25%"  stop-color="#E58BB1"/>
+          <stop offset="55%"  stop-color="#F98037"/>
+          <stop offset="80%"  stop-color="#FCBA2B"/>
+          <stop offset="100%" stop-color="#39ACFC"/>
+        </linearGradient>
+        <filter id="f1"><feGaussianBlur stdDeviation="8"/></filter>
+      </defs>
+      <!-- Blob ombre -->
+      <path d="M40,120 C80,60 160,30 240,70 C310,105 340,45 420,55 C500,65 550,105 580,85 L580,175 C550,195 500,165 420,150 C340,135 310,185 240,160 C160,132 80,170 40,185 Z"
+            fill="url(#b1)" opacity="0.3" filter="url(#f1)"/>
+      <!-- Blob principal -->
+      <path d="M20,108 C70,48 165,18 255,60 C325,92 358,32 445,44 C520,55 558,98 580,72 L580,158 C558,182 520,148 445,132 C358,116 325,168 255,140 C165,108 70,148 20,168 Z"
+            fill="url(#b1)" opacity="0.92"/>
+      <!-- Reflet -->
+      <path d="M20,118 C70,68 165,42 255,76 C325,102 358,52 445,62 C520,72 558,108 580,86 L580,112 C558,132 520,112 445,102 C358,92 325,130 255,108 C165,82 70,112 20,132 Z"
+            fill="white" opacity="0.12"/>
+    </svg>
+
+    <!-- Badge -->
+    <div class="badge">
+      <span>ÉDITION</span>
+      <span>#3</span>
+    </div>
+
+    <!-- Titre -->
+    <div class="title-wrap">
+      <div class="title">F<span class="small-i">i</span>TN'EST<span class="small-i">i</span>VAL</div>
+      <div class="bandeau">FESTIVAL DE FITNESS</div>
+    </div>
+  </div>
+
+  <!-- DATE -->
+  <div class="samedi-label">SAMEDI</div>
+  <div class="date-section">
+    <div class="date-num">22</div>
+    <div class="date-info">
+      <div class="month">MAI 2027</div>
+      <div class="lieu">📍 Espace des fêtes · Férin, Nord (59)</div>
+      <div class="lieu">⏰ Accueil dès 8h00</div>
+    </div>
+  </div>
+
+  <!-- ACTIVITÉS -->
+  <div class="activites">
+    <div class="section-label">— Les zones d'activités —</div>
+    <div class="zones">
+      <div class="zone fit">
+        <div class="zone-icon">💜</div>
+        <div class="zone-name">Fit'Zone</div>
+        <div class="zone-desc">Dance Party · Cardio Combat · HIIT · Body Attack · HYROX</div>
+      </div>
+      <div class="zone air">
+        <div class="zone-icon">🟠</div>
+        <div class="zone-name">Air'Zone</div>
+        <div class="zone-desc">Bootcamp · Challenge Équipe · Renfo Training</div>
+      </div>
+      <div class="zone flow">
+        <div class="zone-icon">🔵</div>
+        <div class="zone-name">Flow'Zone</div>
+        <div class="zone-desc">Yoga · Méditation · Pilates · Stretching</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PASS -->
+  <div class="pass-section">
+    <div class="section-label" style="color:rgba(255,255,255,0.65)">— Choisissez votre pass —</div>
+    <div class="pass-grid">
+      <div class="pass-card">
+        <div>
+          <div class="pass-name">Pass Matin</div>
+          <div class="pass-sub">7h30 → 14h45</div>
+        </div>
+        <div class="pass-price">29€</div>
+      </div>
+      <div class="pass-card featured">
+        <div>
+          <div class="pass-name">Pass Journée ⭐</div>
+          <div class="pass-sub">Accès complet</div>
+        </div>
+        <div class="pass-price">49€</div>
+      </div>
+      <div class="pass-card">
+        <div>
+          <div class="pass-name">Pass Après-midi</div>
+          <div class="pass-sub">Dès 12h30</div>
+        </div>
+        <div class="pass-price">29€</div>
+      </div>
+      <div class="pass-card">
+        <div>
+          <div class="pass-name">Pass Visiteur</div>
+          <div class="pass-sub">Village + soirée</div>
+        </div>
+        <div class="pass-price">5€</div>
+      </div>
+    </div>
+    <p style="text-align:center;font-size:10px;color:rgba(255,255,255,0.6);margin-top:8px;">
+      Toutes formules incluent le village bien-être et la soirée musicale 🎶
+    </p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-logo">FiTN'<span>ESTiVAL</span></div>
+    <div class="socials">
+      <span class="soc">📸 @fitnestival</span>
+      <span class="soc">👥 Facebook</span>
+      <span class="soc">🎵 TikTok</span>
+    </div>
+    <div class="helloasso">
+      Réservation sur <strong>HelloAsso</strong> · fitnestival@gmail.com
+    </div>
+  </div>
+
+</div>
+</body></html>

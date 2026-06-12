@@ -1,0 +1,107 @@
+<svg width="900" height="500" viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&amp;family=Poppins:wght@700;800&amp;display=swap');
+    </style>
+
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3a0a8c"/>
+      <stop offset="100%" stop-color="#5c0fbe"/>
+    </linearGradient>
+
+    <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#39ACFC"/>
+      <stop offset="28%"  stop-color="#E58BB1"/>
+      <stop offset="60%"  stop-color="#F98037"/>
+      <stop offset="100%" stop-color="#FCBA2B"/>
+    </linearGradient>
+    <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%"   stop-color="#FCBA2B" stop-opacity="0.5"/>
+      <stop offset="50%"  stop-color="#F98037" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#39ACFC" stop-opacity="0.5"/>
+    </linearGradient>
+
+    <filter id="glow" x="-10%" y="-50%" width="120%" height="200%">
+      <feGaussianBlur stdDeviation="12" result="blur"/>
+      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="textshadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="8" flood-color="#00000066"/>
+    </filter>
+  </defs>
+
+  <!-- Fond violet -->
+  <rect width="900" height="500" fill="url(#bg)"/>
+
+  <!-- Vague ombre basse -->
+  <path d="M-10,240 C100,180 230,158 370,205 C470,240 530,178 640,190 C750,202 840,242 910,215
+           L910,315 C840,345 750,298 640,282 C530,266 470,322 370,282 C230,238 100,268 -10,318 Z"
+        fill="url(#wave2)" opacity="0.5" filter="url(#glow)"/>
+
+  <!-- Vague principale -->
+  <path d="M-10,215 C100,155 235,132 372,180 C472,218 530,156 642,168 C754,180 843,220 910,190
+           L910,298 C843,332 754,284 642,268 C530,252 472,308 372,264 C235,218 100,250 -10,305 Z"
+        fill="url(#wave1)" opacity="0.88" filter="url(#glow)"/>
+
+  <!-- Reflet lumineux -->
+  <path d="M-10,228 C100,175 235,155 372,196 C472,228 530,170 642,180 C754,190 843,228 910,202
+           L910,238 C843,262 754,232 642,222 C530,212 472,264 372,230 C235,198 100,220 -10,252 Z"
+        fill="white" opacity="0.07"/>
+
+  <!-- TITRE étiré sur toute la largeur -->
+  <text x="450" y="262"
+        font-family="'Bebas Neue', Arial, sans-serif"
+        font-size="128"
+        font-weight="900"
+        fill="white"
+        text-anchor="middle"
+        textLength="760"
+        lengthAdjust="spacingAndGlyphs"
+        filter="url(#textshadow)">FiTN'ESTiVAL</text>
+
+  <!-- Bandeau FESTIVAL DE FITNESS -->
+  <rect x="240" y="288" width="420" height="44" rx="4" fill="#4a0daa"/>
+  <rect x="240" y="288" width="420" height="44" rx="4" fill="none" stroke="white" stroke-width="1.5" opacity="0.35"/>
+  <text x="450" y="317"
+        font-family="'Poppins', Montserrat, sans-serif"
+        font-size="16"
+        font-weight="700"
+        fill="white"
+        text-anchor="middle"
+        letter-spacing="7">FESTIVAL DE FITNESS</text>
+
+  <!-- Date -->
+  <text x="450" y="385"
+        font-family="'Poppins', Montserrat, sans-serif"
+        font-size="36"
+        font-weight="800"
+        fill="white"
+        text-anchor="middle"
+        letter-spacing="1">SAMEDI 22 MAI 2027</text>
+
+  <!-- Lieu -->
+  <text x="450" y="422"
+        font-family="'Poppins', Montserrat, sans-serif"
+        font-size="16"
+        font-weight="600"
+        fill="#c9a8f5"
+        text-anchor="middle"
+        letter-spacing="2">FÉRIN · NORD (59)</text>
+
+  <!-- Badge ÉDITION #3 -->
+  <circle cx="70" cy="70" r="46" fill="#3a0a8c" opacity="0.75"/>
+  <circle cx="70" cy="70" r="46" fill="none" stroke="#a78bfa" stroke-width="2"/>
+  <text x="70" y="60"
+        font-family="'Poppins', sans-serif"
+        font-size="11"
+        font-weight="600"
+        fill="white"
+        text-anchor="middle"
+        letter-spacing="1">ÉDITION</text>
+  <text x="70" y="88"
+        font-family="'Bebas Neue', Arial, sans-serif"
+        font-size="28"
+        font-weight="700"
+        fill="white"
+        text-anchor="middle">#3</text>
+</svg>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Boutique — FiTN'ESTiVAL 2027</title>
+  <meta name="description" content="Boutique officielle FiTN'ESTiVAL 2027 : T-shirts, casquettes et gourdes aux couleurs du festival de fitness du Nord." />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --purple: #5a0bb7;
+      --pink:   #d01dd7;
+      --orange: #ff7a00;
+      --yellow: #ffc928;
+      --blue:   #22a8ee;
+      --dark:   #16072d;
+      --white:  #fff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+    body { margin: 0; font-family: Montserrat, Arial, sans-serif; color: var(--white); background: var(--dark); }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1120px, 92%); margin: auto; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+      padding: 1rem 1.35rem; border-radius: 999px; font-weight: 900; text-transform: uppercase;
+      box-shadow: 0 16px 35px #0005; transition: .2s; font-size: .9rem; cursor: pointer; border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(90deg, var(--yellow), var(--orange)); color: #240033; }
+    .btn-secondary { background: var(--white); color: var(--purple); }
+
+    /* ── NAV ── */
+    header {
+      position: sticky; top: 0; z-index: 100;
+      background: #16072dd9; backdrop-filter: blur(12px);
+      border-bottom: 1px solid #ffffff20;
+    }
+    .nav { height: 72px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2.1rem; letter-spacing: .04em; }
+    .logo span { color: var(--yellow); }
+    .menu { display: flex; gap: 1.4rem; font-weight: 700; font-size: .88rem; list-style: none; margin: 0; padding: 0; }
+    .menu a:hover { color: var(--yellow); }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: .4rem; background: none; border: none; z-index: 1001; }
+    .hamburger span { display: block; width: 26px; height: 3px; background: #fff; border-radius: 3px; transition: all .3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+    .mobile-menu {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(14,4,32,.97);
+      flex-direction: column; align-items: center; justify-content: center; gap: 1.8rem;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: #fff; font-size: 1.6rem; font-weight: 900; font-family: 'Bebas Neue', sans-serif;
+      letter-spacing: .06em; text-decoration: none; transition: color .2s;
+    }
+    .mobile-menu a:hover { color: var(--yellow); }
+    @media(max-width: 768px) { .menu { display: none; } .hamburger { display: flex; } }
+
+    /* ── HERO BOUTIQUE ── */
+    .shop-hero {
+      padding: 5rem 0 3.5rem;
+      background:
+        radial-gradient(circle at 10% 50%, #ff38d9 0 8%, transparent 32%),
+        radial-gradient(circle at 90% 30%, #6f30ff 0 14%, transparent 40%),
+        linear-gradient(135deg, #31006e, #8f16c8 48%, #ff7a00);
+      text-align: center;
+    }
+    .shop-hero .badge {
+      display: inline-block; background: var(--orange); color: #fff;
+      padding: .4rem 1.1rem; border-radius: 999px; font-weight: 900;
+      text-transform: uppercase; font-size: .8rem; letter-spacing: .2em; margin-bottom: 1.2rem;
+    }
+    .shop-hero h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(3rem, 10vw, 7rem); line-height: .9;
+      margin: 0 0 1rem; text-shadow: 0 10px 25px #0007;
+    }
+    .shop-hero h1 span { color: var(--yellow); }
+    .shop-hero p { font-size: 1.1rem; color: #fffdf0; max-width: 560px; margin: 0 auto 2rem; line-height: 1.6; }
+
+    /* ── COMING SOON BANNER ── */
+    .coming-soon-bar {
+      background: linear-gradient(90deg, var(--yellow), var(--orange));
+      color: #240033; text-align: center;
+      padding: .9rem 1rem; font-weight: 900; font-size: .95rem; letter-spacing: .15em; text-transform: uppercase;
+    }
+
+    /* ── PRODUITS ── */
+    .products-section { padding: 5rem 0 6rem; }
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 6vw, 4rem);
+      text-align: center; margin: 0 0 .5rem;
+    }
+    .section-title span { color: var(--yellow); }
+    .section-sub { text-align: center; color: #b8a8d4; font-size: 1rem; margin: 0 0 3.5rem; }
+
+    .products-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;
+    }
+
+    .product-card {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 24px; overflow: hidden;
+      transition: transform .25s, box-shadow .25s;
+      position: relative;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,.45); }
+
+    .product-visual {
+      height: 260px; display: flex; align-items: center; justify-content: center;
+      font-size: 7rem; position: relative;
+    }
+    .product-visual.tshirt  { background: linear-gradient(135deg, #5a0bb7, #d01dd7); }
+    .product-visual.casque  { background: linear-gradient(135deg, #ff7a00, #ffc928); }
+    .product-visual.gourde  { background: linear-gradient(135deg, #22a8ee, #5a0bb7); }
+
+    .tag-soon {
+      position: absolute; top: 14px; right: 14px;
+      background: rgba(14,4,32,.85); backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,201,40,.4);
+      color: var(--yellow); font-size: .72rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: .15em;
+      padding: .3rem .7rem; border-radius: 999px;
+    }
+
+    .product-body { padding: 1.6rem; }
+    .product-name {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1.9rem;
+      letter-spacing: .04em; margin: 0 0 .3rem;
+    }
+    .product-desc { color: #b8a8d4; font-size: .9rem; line-height: 1.55; margin: 0 0 1.1rem; }
+
+    .product-variants { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 1.3rem; }
+    .variant-pill {
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18);
+      border-radius: 999px; padding: .25rem .75rem; font-size: .78rem; font-weight: 700; color: #d4c8f0;
+    }
+
+    .product-footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .product-price {
+      font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem; color: var(--yellow); line-height: 1;
+    }
+    .product-price small { font-family: Montserrat, sans-serif; font-size: .75rem; font-weight: 700; color: #b8a8d4; display: block; }
+
+    .btn-notify {
+      background: linear-gradient(90deg, var(--yellow), var(--orange));
+      color: #240033; font-weight: 900; text-transform: uppercase;
+      border: none; border-radius: 999px; padding: .75rem 1.3rem; font-size: .82rem;
+      cursor: pointer; transition: .2s; white-space: nowrap;
+    }
+    .btn-notify:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,122,0,.4); }
+
+    /* ── NEWSLETTER NOTIF ── */
+    .notify-section {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 24px; padding: 3.5rem 2.5rem;
+      text-align: center; margin: 5rem 0;
+    }
+    .notify-section h2 {
+      font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 5vw, 3.2rem);
+      margin: 0 0 .75rem;
+    }
+    .notify-section h2 span { color: var(--yellow); }
+    .notify-section p { color: #b8a8d4; margin: 0 0 2rem; font-size: 1rem; }
+    .notify-form { display: flex; gap: .75rem; justify-content: center; flex-wrap: wrap; max-width: 520px; margin: auto; }
+    .notify-form input {
+      flex: 1; min-width: 220px; padding: .95rem 1.3rem;
+      background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.22);
+      border-radius: 999px; color: #fff; font-family: Montserrat, sans-serif; font-size: .95rem;
+      outline: none; transition: border-color .2s;
+    }
+    .notify-form input::placeholder { color: #7a6a9a; }
+    .notify-form input:focus { border-color: var(--yellow); }
+    .notify-form button {
+      background: linear-gradient(90deg, var(--yellow), var(--orange));
+      color: #240033; font-weight: 900; text-transform: uppercase;
+      border: none; border-radius: 999px; padding: .95rem 1.8rem; font-size: .9rem;
+      cursor: pointer; transition: .2s;
+    }
+    .notify-form button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255,122,0,.4); }
+    .notify-success { display: none; color: #6dffb3; font-weight: 700; font-size: 1rem; margin-top: 1rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid #ffffff15; padding: 2.5rem 0; text-align: center;
+      color: #7a6a9a; font-size: .85rem;
+    }
+    footer a { color: var(--yellow); }
+  </style>
+</head>
+<body>
+
+<!-- ── MOBILE MENU ── -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html">Accueil</a>
+  <a href="index.html#programme">Programme</a>
+  <a href="index.html#activites">Activités</a>
+  <a href="index.html#infos">Infos</a>
+  <a href="boutique.html" style="color:var(--yellow)">Boutique</a>
+  <a href="index.html#contact">Contact</a>
+</div>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="container">
+    <nav class="nav">
+      <a href="index.html" class="logo">FiTN'<span>ESTi</span>VAL</a>
+      <ul class="menu">
+        <li><a href="index.html">Accueil</a></li>
+        <li><a href="index.html#programme">Programme</a></li>
+        <li><a href="index.html#activites">Activités</a></li>
+        <li><a href="index.html#infos">Infos</a></li>
+        <li><a href="boutique.html" style="color:var(--yellow)">Boutique</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+      </ul>
+      <div class="nav-right">
+        <a href="index.html#billetterie" class="btn btn-primary" style="font-size:.8rem;padding:.7rem 1.1rem;">Réserver mon pass</a>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="shop-hero">
+  <div class="container">
+    <div class="badge">Boutique officielle</div>
+    <h1>Les <span>goodies</span><br>du festival</h1>
+    <p>T-shirts, casquettes et gourdes aux couleurs de FiTN'ESTiVAL 2027. Affiche ta passion du fitness !</p>
+    <a href="#produits" class="btn btn-primary">Voir les produits</a>
+  </div>
+</section>
+
+<!-- ── COMING SOON ── -->
+<div class="coming-soon-bar">
+  🎉 Ouverture de la boutique prévue début 2027 — Inscris-toi pour être notifié en premier !
+</div>
+
+<!-- ── PRODUITS ── -->
+<section class="products-section" id="produits">
+  <div class="container">
+    <h2 class="section-title">Nos <span>produits</span></h2>
+    <p class="section-sub">Collection exclusive FiTN'ESTiVAL 2027 — édition limitée</p>
+
+    <div class="products-grid">
+
+      <!-- T-SHIRT -->
+      <div class="product-card">
+        <div class="product-visual tshirt">
+          👕
+          <span class="tag-soon">Bientôt dispo</span>
+        </div>
+        <div class="product-body">
+          <div class="product-name">T-Shirt Festival</div>
+          <p class="product-desc">100% coton bio, coupe unisexe. Logo FiTN'ESTiVAL brodé sur la poitrine, impression dos full-color.</p>
+          <div class="product-variants">
+            <span class="variant-pill">XS</span>
+            <span class="variant-pill">S</span>
+            <span class="variant-pill">M</span>
+            <span class="variant-pill">L</span>
+            <span class="variant-pill">XL</span>
+            <span class="variant-pill">XXL</span>
+          </div>
+          <div class="product-variants">
+            <span class="variant-pill">Violet</span>
+            <span class="variant-pill">Noir</span>
+            <span class="variant-pill">Blanc</span>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              25 €
+              <small>Port offert dès 50 €</small>
+            </div>
+            <button class="btn-notify" onclick="scrollToNotify()">Me notifier</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- CASQUETTE -->
+      <div class="product-card">
+        <div class="product-visual casque">
+          🧢
+          <span class="tag-soon">Bientôt dispo</span>
+        </div>
+        <div class="product-body">
+          <div class="product-name">Casquette FiTN</div>
+          <p class="product-desc">Casquette snapback réglable, broderie 3D logo sur la visière. Parfaite pour les séances en extérieur.</p>
+          <div class="product-variants">
+            <span class="variant-pill">Taille unique</span>
+          </div>
+          <div class="product-variants">
+            <span class="variant-pill">Noir/Jaune</span>
+            <span class="variant-pill">Violet/Blanc</span>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              22 €
+              <small>Port offert dès 50 €</small>
+            </div>
+            <button class="btn-notify" onclick="scrollToNotify()">Me notifier</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GOURDE -->
+      <div class="product-card">
+        <div class="product-visual gourde">
+          🥤
+          <span class="tag-soon">Bientôt dispo</span>
+        </div>
+        <div class="product-body">
+          <div class="product-name">Gourde Inox</div>
+          <p class="product-desc">500 ml, double paroi inox, garde au froid 24h / chaud 12h. Logo FiTN'ESTiVAL gravé au laser.</p>
+          <div class="product-variants">
+            <span class="variant-pill">500 ml</span>
+          </div>
+          <div class="product-variants">
+            <span class="variant-pill">Bleu électrique</span>
+            <span class="variant-pill">Violet mat</span>
+            <span class="variant-pill">Noir</span>
+          </div>
+          <div class="product-footer">
+            <div class="product-price">
+              28 €
+              <small>Port offert dès 50 €</small>
+            </div>
+            <button class="btn-notify" onclick="scrollToNotify()">Me notifier</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── NOTIFICATION ── -->
+<section class="container" id="notifier">
+  <div class="notify-section">
+    <h2>Sois le <span>premier informé</span></h2>
+    <p>La boutique ouvre début 2027. Laisse ton email et on te prévient dès que les commandes sont ouvertes.</p>
+    <form class="notify-form" onsubmit="handleNotify(event)">
+      <input type="email" id="notifyEmail" placeholder="ton@email.fr" required />
+      <button type="submit">Me notifier</button>
+    </form>
+    <p class="notify-success" id="notifySuccess">✅ Super ! Tu seras parmi les premiers à le savoir.</p>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <p>© 2027 FiTN'ESTiVAL — <a href="index.html">Retour à l'accueil</a> · <a href="index.html#contact">Contact</a></p>
+  </div>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+    hamburger.classList.remove('open');
+    mobileMenu.classList.remove('open');
+  }));
+
+  function scrollToNotify() {
+    document.getElementById('notifier').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    setTimeout(() => document.getElementById('notifyEmail').focus(), 600);
+  }
+
+  function handleNotify(e) {
+    e.preventDefault();
+    document.querySelector('.notify-form').style.display = 'none';
+    document.getElementById('notifySuccess').style.display = 'block';
+  }
+</script>
+
+</body>
+</html>
