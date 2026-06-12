@@ -38,12 +38,12 @@ Si tu ne peux pas identifier la bouteille du tout, renvoie {"error": "non identi
         'Authorization': `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: 'mistral-small-latest',
+        model: 'pixtral-12b-2409',
         messages: [{
           role: 'user',
           content: [
             { type: 'text', text: prompt },
-            { type: 'image_url', image_url: image },
+            { type: 'image_url', image_url: { url: image } },
           ],
         }],
         max_tokens: 500,
