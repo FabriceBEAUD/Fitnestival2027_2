@@ -1631,6 +1631,19 @@
   .typing span:nth-child(2) { animation-delay: .15s; }
   .typing span:nth-child(3) { animation-delay: .3s; }
   @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-6px)} }
+
+  /* ── CHATBOT MOBILE ── */
+  @media (max-width: 480px) {
+    #marie-bubble {
+      left: 0.75rem; right: 0.75rem;
+      width: auto;
+      bottom: 5.25rem;
+      max-height: calc(100dvh - 6.5rem);
+    }
+    #marie-messages { max-height: none; min-height: 120px; }
+    .marie-suggestions { max-height: 76px; overflow-y: auto; }
+    #marie-input { font-size: 16px; }
+  }
 </style>
 
 <button id="marie-btn" onclick="toggleMarie()" title="Parler à Marie">
