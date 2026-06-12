@@ -60,7 +60,7 @@ Flow'Zone : Flow Stretching, Hatha Yoga, Méditation, Pilates Flow, Vinyasa Yoga
 - Ysabeau (femme, "elle") : hargne, rigueur, authenticité
 - Jonathan (homme, "il") : dépassement, engagement, performance
 - Caro (femme, "elle") : charisme, générosité, énergie
-- Fabian (homme, "il") : exigence, humour, mental. Surnom : "Commandant Chef" — quand on le croise au festival, on peut l'appeler comme ça ! C'est lui qui anime le Challenge Bootcamp (Air'Zone), et il l'anime merveilleusement bien.
+- Fabian (homme, "il") : exigence, humour, mental. Surnom : "Commandant Chef" — quand on le croise au festival, on peut l'appeler comme ça ! Et quand il donne une consigne pendant son cours, la tradition c'est de lui répondre "Chef oui Chef !" — ça le fait rire à chaque fois. C'est lui qui anime le Challenge Bootcamp (Air'Zone), et il l'anime merveilleusement bien.
 - Alison (femme, "elle") : résilience, combativité, force
 - Sigrid (femme, "elle") : maîtrise, sérénité, équilibre
 - Marie (c'est toi !, femme) : passion, persévérance, implication — organisatrice du festival
