@@ -42,6 +42,25 @@
     font-weight: 800;
   }
   header p { color: var(--muted); margin-top: 4px; font-size: 14px; }
+  #admin-toggle {
+    margin-top: 10px;
+    background: none;
+    border: 1px solid #3d5378;
+    color: var(--muted);
+    border-radius: 20px;
+    padding: 6px 16px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: 0.15s;
+  }
+  #admin-toggle:hover { border-color: var(--accent2); color: var(--accent2); }
+  #admin-toggle.on {
+    border-color: var(--accent2);
+    color: var(--accent2);
+    background: rgba(255, 214, 10, 0.1);
+    font-weight: 700;
+  }
 
   main { max-width: 720px; margin: 0 auto; padding: 0 14px; }
 
@@ -276,6 +295,7 @@
   <div class="ball">⚽🏆</div>
   <h1>PRONO'XP</h1>
   <p>Paris entre copains · Coupe du Monde 2026 · 100&nbsp;% XP, 0&nbsp;% argent</p>
+  <button id="admin-toggle" onclick="toggleAdmin()">🔒 Mode admin</button>
 </header>
 
 <main>
@@ -309,7 +329,7 @@
 
   <!-- ============ MATCHS ============ -->
   <section id="tab-matches">
-    <div class="card">
+    <div class="card admin-only" id="add-match-card">
       <h2>➕ Ajouter un match</h2>
       <div class="row">
         <div><label>Équipe 1</label><input id="m-teamA" placeholder="Ex : France" maxlength="25"></div>
@@ -326,6 +346,9 @@
         <div><label>Date du match</label><input id="m-date" type="date"></div>
       </div>
       <button class="btn" onclick="addMatch()">Ajouter le match</button>
+    </div>
+    <div class="card" id="match-admin-hint" style="display:none">
+      <p class="hint" style="margin:0">🔑 Seul <b>Jules</b> (l'admin) peut ajouter des matchs et entrer les résultats. Les copains, vous êtes là pour parier ! 😄</p>
     </div>
     <div id="matches-list"></div>
   </section>
@@ -360,7 +383,11 @@
     <div class="card">
       <h2>⚙️ Gestion</h2>
       <p class="hint">Les données sont sauvegardées automatiquement dans ce navigateur.</p>
-      <button class="btn danger" onclick="resetAll()">🗑️ Tout remettre à zéro</button>
+      <div id="admin-tools" style="display:none">
+        <button class="btn danger" onclick="resetAll()">🗑️ Tout remettre à zéro</button>
+        <button class="btn secondary" style="margin-top:8px" onclick="changePin()">🔑 Changer le code admin</button>
+      </div>
+      <p class="hint" id="gestion-hint" style="margin:0">🔑 La remise à zéro est réservée à <b>Jules</b> (mode admin, bouton en haut de page).</p>
     </div>
   </section>
 
@@ -405,6 +432,7 @@ function load() {
       { id: uid(), teamA: 'Espagne', teamB: 'Argentine', stage: 'Demi-finale', date: '2026-07-15', scoreA: null, scoreB: null },
     ],
     bets: [],
+    adminPin: null,
   };
 }
 function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
@@ -424,6 +452,69 @@ function toast(msg, isError = false) {
   t.className = isError ? 'error show' : 'show';
   clearTimeout(t._timer);
   t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ---------- Mode admin (Jules) ---------- */
+let isAdmin = false; // se reverrouille à chaque rechargement de la page
+
+// Encodage léger du code (évite qu'il soit lisible en clair dans le stockage,
+// mais ce n'est pas un coffre-fort — c'est un jeu entre copains !)
+function encodePin(pin) { return btoa('pronoxp:' + pin); }
+
+function toggleAdmin() {
+  if (isAdmin) {
+    isAdmin = false;
+    renderAll();
+    toast('Mode admin verrouillé 🔒');
+    return;
+  }
+  if (!state.adminPin) {
+    const pin1 = prompt('Jules, choisis ton code admin (4 chiffres ou plus) :');
+    if (!pin1) return;
+    if (pin1.trim().length < 4) return toast('Le code doit faire au moins 4 caractères !', true);
+    const pin2 = prompt('Confirme ton code :');
+    if (pin2 !== pin1) return toast('Les deux codes ne correspondent pas !', true);
+    state.adminPin = encodePin(pin1.trim());
+    save();
+    isAdmin = true;
+    renderAll();
+    toast('Code créé — bienvenue chef Jules ! 👑');
+    return;
+  }
+  const pin = prompt('Code admin :');
+  if (pin === null) return;
+  if (encodePin(pin.trim()) !== state.adminPin) return toast('Mauvais code ! 🙅', true);
+  isAdmin = true;
+  renderAll();
+  toast('Mode admin activé — à toi de jouer Jules ! 👑');
+}
+
+function changePin() {
+  if (!requireAdmin()) return;
+  const pin1 = prompt('Nouveau code admin (4 caractères minimum) :');
+  if (!pin1) return;
+  if (pin1.trim().length < 4) return toast('Le code doit faire au moins 4 caractères !', true);
+  const pin2 = prompt('Confirme le nouveau code :');
+  if (pin2 !== pin1) return toast('Les deux codes ne correspondent pas !', true);
+  state.adminPin = encodePin(pin1.trim());
+  save();
+  toast('Code admin modifié ✅');
+}
+
+function requireAdmin() {
+  if (isAdmin) return true;
+  toast('Action réservée à Jules — active le mode admin 🔑', true);
+  return false;
+}
+
+function renderAdminUI() {
+  const btn = $('admin-toggle');
+  btn.textContent = isAdmin ? '🔓 Admin : Jules 👑' : '🔒 Mode admin';
+  btn.classList.toggle('on', isAdmin);
+  $('add-match-card').style.display = isAdmin ? '' : 'none';
+  $('match-admin-hint').style.display = isAdmin ? 'none' : '';
+  $('admin-tools').style.display = isAdmin ? '' : 'none';
+  $('gestion-hint').style.display = isAdmin ? 'none' : '';
 }
 
 /* ---------- Navigation ---------- */
@@ -448,6 +539,7 @@ function addPlayer() {
 }
 
 function removePlayer(id) {
+  if (!requireAdmin()) return;
   const p = player(id);
   if (!confirm(`Supprimer ${p.name} et tous ses paris ?`)) return;
   state.players = state.players.filter(x => x.id !== id);
@@ -466,12 +558,13 @@ function renderPlayers() {
       <div class="avatar">${p.emoji}</div>
       <div class="name">${esc(p.name)}</div>
       <div class="xp-badge">${p.xp} XP</div>
-      <button class="mini" onclick="removePlayer('${p.id}')">✕</button>
+      ${isAdmin ? `<button class="mini" onclick="removePlayer('${p.id}')">✕</button>` : ''}
     </div>`).join('');
 }
 
 /* ---------- Matchs ---------- */
 function addMatch() {
+  if (!requireAdmin()) return;
   const teamA = $('m-teamA').value.trim();
   const teamB = $('m-teamB').value.trim();
   if (!teamA || !teamB) return toast('Il faut deux équipes !', true);
@@ -487,6 +580,7 @@ function addMatch() {
 }
 
 function removeMatch(id) {
+  if (!requireAdmin()) return;
   const m = match(id);
   const linked = state.bets.filter(b => b.matchId === id && !b.settled);
   let msg = `Supprimer ${m.teamA} – ${m.teamB} ?`;
@@ -500,6 +594,7 @@ function removeMatch(id) {
 }
 
 function enterResult(id) {
+  if (!requireAdmin()) return;
   const m = match(id);
   const sA = prompt(`Score de ${m.teamA} ?`);
   if (sA === null) return;
@@ -563,10 +658,10 @@ function renderMatches() {
       </div>
       <div class="match-meta">🏟️ Coupe du Monde 2026${matchDateLabel(m)}</div>
       ${betLines ? `<div class="bets-on-match">${betLines}</div>` : ''}
-      <div class="match-actions">
+      ${isAdmin ? `<div class="match-actions">
         ${!done ? `<button class="btn secondary" onclick="enterResult('${m.id}')">📝 Entrer le résultat</button>` : ''}
         <button class="btn danger" onclick="removeMatch('${m.id}')">Supprimer</button>
-      </div>
+      </div>` : ''}
     </div>`;
   }).join('');
 }
@@ -731,15 +826,19 @@ function renderRanking() {
 
 /* ---------- Reset ---------- */
 function resetAll() {
+  if (!requireAdmin()) return;
   if (!confirm('Tout effacer (joueurs, matchs, paris) ? Cette action est définitive.')) return;
+  const pin = state.adminPin; // Jules garde son code après la remise à zéro
   localStorage.removeItem(STORAGE_KEY);
   state = load();
+  state.adminPin = pin;
   save(); renderAll();
   toast('Nouvelle partie ! Tout est remis à zéro 🔄');
 }
 
 /* ---------- Render global ---------- */
 function renderAll() {
+  renderAdminUI();
   renderPlayers();
   renderMatches();
   renderBetSelectors();
