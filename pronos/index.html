@@ -311,8 +311,12 @@
   <!-- ============ JOUEURS ============ -->
   <section id="tab-players" class="active">
     <div class="card">
-      <h2>👥 Ajouter un joueur</h2>
-      <p class="hint">Chaque joueur démarre avec <b>1000 XP</b>. À toi de faire fructifier ton capital avec tes pronos !</p>
+      <h2>👤 Mon profil</h2>
+      <div id="me-body"></div>
+    </div>
+    <div class="card" id="add-player-card">
+      <h2>👥 Ajouter un joueur <span style="font-size:12px;color:var(--muted)">(réservé à Jules)</span></h2>
+      <p class="hint">Crée un joueur pour chaque copain (1000 XP de départ), puis donne-lui son nom : il le choisira dans « Mon profil » sur son téléphone.</p>
       <div class="row">
         <div style="flex:0 0 90px">
           <label>Avatar</label>
@@ -370,8 +374,6 @@
         🎯 <b>Score exact en bonus</b> : tu gagnes <b>5× ta mise</b> !<br>
         ❌ Prono raté : la mise est perdue. Mise minimum : 10 XP.
       </p>
-      <label>Qui parie ?</label>
-      <select id="b-player" onchange="renderBetForm()"></select>
       <label>Sur quel match ?</label>
       <select id="b-match" onchange="renderBetForm()"></select>
       <div id="bet-form-body"></div>
@@ -595,6 +597,7 @@ function renderAdminUI() {
   btn.textContent = isAdmin ? '🔓 Admin : Jules 👑' : '🔒 Mode admin';
   btn.classList.toggle('on', isAdmin);
   $('add-match-card').style.display = isAdmin ? '' : 'none';
+  $('add-player-card').style.display = isAdmin ? '' : 'none';
   $('match-admin-hint').style.display = isAdmin ? 'none' : '';
   $('admin-tools').style.display = isAdmin ? '' : 'none';
   $('gestion-hint').style.display = isAdmin ? 'none' : '';
@@ -609,8 +612,57 @@ function showTab(btn) {
   renderAll();
 }
 
+/* ---------- Mon profil (identité locale à l'appareil, non partagée) ---------- */
+const ME_KEY = 'pronoxp-me';
+
+function me() {
+  const id = localStorage.getItem(ME_KEY);
+  const p = id ? player(id) : null;
+  if (id && !p) localStorage.removeItem(ME_KEY); // joueur supprimé entre-temps
+  return p;
+}
+
+function claimPlayer() {
+  const sel = $('me-select');
+  if (!sel || !sel.value) return;
+  localStorage.setItem(ME_KEY, sel.value);
+  renderAll();
+  toast(`Salut ${player(sel.value).name} ! Bonne chance pour tes pronos 🍀`);
+}
+
+function unclaim() {
+  localStorage.removeItem(ME_KEY);
+  renderAll();
+}
+
+function renderMe() {
+  const el = $('me-body');
+  const p = me();
+  if (p) {
+    el.innerHTML = `
+    <div class="player-line" style="border:none;padding:4px 0">
+      <div class="avatar">${p.emoji}</div>
+      <div class="name">${esc(p.name)}
+        <div class="stats" style="font-size:12px;color:var(--muted)">C'est toi — tes paris se font avec ce joueur</div>
+      </div>
+      <div class="xp-badge">${p.xp} XP</div>
+      <button class="mini" onclick="unclaim()">changer</button>
+    </div>`;
+  } else if (!state.players.length) {
+    el.innerHTML = `<div class="empty"><span class="big">🙋</span>Aucun joueur pour l'instant.<br>Demande à <b>Jules</b> de créer ton joueur, puis choisis ton nom ici !</div>`;
+  } else {
+    el.innerHTML = `
+      <p class="hint">Choisis le nom que <b>Jules</b> t'a donné — ton téléphone s'en souviendra :</p>
+      <select id="me-select">
+        ${state.players.map(p => `<option value="${p.id}">${p.emoji} ${esc(p.name)}</option>`).join('')}
+      </select>
+      <button class="btn" onclick="claimPlayer()">✅ C'est moi !</button>`;
+  }
+}
+
 /* ---------- Joueurs ---------- */
 function addPlayer() {
+  if (!requireAdmin()) return;
   const name = $('p-name').value.trim();
   if (!name) return toast('Entre un prénom ou un pseudo !', true);
   if (state.players.some(p => p.name.toLowerCase() === name.toLowerCase()))
@@ -753,25 +805,25 @@ function renderMatches() {
 let currentPick = null;
 
 function renderBetSelectors() {
-  const pSel = $('b-player'), mSel = $('b-match');
-  const prevP = pSel.value, prevM = mSel.value;
-  pSel.innerHTML = state.players.map(p =>
-    `<option value="${p.id}">${p.emoji} ${esc(p.name)} — ${p.xp} XP</option>`).join('')
-    || '<option value="">Aucun joueur — va dans l\'onglet Joueurs</option>';
+  const mSel = $('b-match');
+  const prevM = mSel.value;
   const open = state.matches.filter(m => !isDone(m));
   mSel.innerHTML = open.map(m =>
     `<option value="${m.id}">${esc(m.teamA)} – ${esc(m.teamB)} (${esc(m.stage)})</option>`).join('')
     || '<option value="">Aucun match ouvert</option>';
-  if ([...pSel.options].some(o => o.value === prevP)) pSel.value = prevP;
   if ([...mSel.options].some(o => o.value === prevM)) mSel.value = prevM;
 }
 
 function renderBetForm() {
   currentPick = null;
   const body = $('bet-form-body');
-  const p = player($('b-player').value);
+  const p = me();
   const m = match($('b-match').value);
-  if (!p || !m) { body.innerHTML = `<div class="empty">Ajoute au moins un joueur et un match pour parier ! 😉</div>`; return; }
+  if (!p) {
+    body.innerHTML = `<div class="empty"><span class="big">🙋</span>Choisis d'abord ton joueur dans l'onglet <b>Joueurs</b> → « Mon profil » !</div>`;
+    return;
+  }
+  if (!m) { body.innerHTML = `<div class="empty">Aucun match ouvert aux paris pour l'instant ! ⏳</div>`; return; }
   const existing = state.bets.find(b => b.playerId === p.id && b.matchId === m.id);
   if (existing) {
     body.innerHTML = `<div class="empty"><span class="big">✋</span><b>${esc(p.name)}</b> a déjà parié sur ce match.<br>Un seul pari par match et par joueur !</div>`;
@@ -817,7 +869,7 @@ function updatePayout() {
 }
 
 function placeBet() {
-  const p = player($('b-player').value);
+  const p = me();
   const m = match($('b-match').value);
   if (!p || !m) return;
   if (!currentPick) return toast('Choisis un prono (équipe 1, nul ou équipe 2) !', true);
@@ -922,6 +974,7 @@ function resetAll() {
 /* ---------- Render global ---------- */
 function renderAll() {
   renderAdminUI();
+  renderMe();
   renderPlayers();
   renderMatches();
   renderBetSelectors();
