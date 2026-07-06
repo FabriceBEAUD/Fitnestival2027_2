@@ -11,7 +11,7 @@ Organisatrice : Marie Beaud'huin — fitnestival@gmail.com
 ├── api/
 │   ├── chat.js                       # Chatbot Marie (Mistral AI)
 │   ├── contact.js                    # API contact (legacy)
-│   └── pronos.js                     # Synchro PRONO'XP (Upstash Redis)
+│   └── pronos.js                     # Synchro PRONO'XP (Vercel Blob)
 ├── pronos/
 │   └── index.html                    # Mini appli PRONO'XP (paris en XP, hors festival)
 ├── img/                              # Images et vidéos
@@ -61,7 +61,7 @@ Le déploiement est automatique à chaque push sur `main`.
 - Jeu de paris en XP (points virtuels, pas d'argent) sur la Coupe du Monde 2026, pour Jules (fils de Fabrice) et ses copains
 - URL : `/pronos/` — indépendante du site festival
 - Mode admin protégé par code (Jules) : gestion des matchs, résultats, remise à zéro
-- Synchro multi-appareils via `api/pronos.js` + Upstash Redis (variables `UPSTASH_REDIS_REST_URL`/`TOKEN` ou `KV_REST_API_URL`/`TOKEN`)
+- Synchro multi-appareils via `api/pronos.js` + Vercel Blob (store `pronoxp`, fichier `pronoxp/state.json`, variable `BLOB_READ_WRITE_TOKEN`)
 - Sans base configurée : l'API répond 503 et l'appli fonctionne en mode local (localStorage)
 
 ## Variables d'environnement (Vercel Dashboard)
@@ -69,7 +69,7 @@ Le déploiement est automatique à chaque push sur `main`.
 |----------|-------|
 | `MISTRAL_API_KEY` | Chatbot Marie |
 | `RESEND_API_KEY` | Legacy (non utilisé) |
-| `UPSTASH_REDIS_REST_URL` + `UPSTASH_REDIS_REST_TOKEN` | Synchro PRONO'XP (créées auto par l'intégration Upstash) |
+| `BLOB_READ_WRITE_TOKEN` | Synchro PRONO'XP (créée auto par le store Vercel Blob `pronoxp`) |
 
 ## Historique des choix techniques
 - **EmailJS** remplace Resend : Resend ne permettait pas d'envoyer vers fitnestival@gmail.com sans domaine vérifié

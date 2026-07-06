@@ -1,36 +1,34 @@
 // API de synchronisation PRONO'XP (pronos/index.html)
-// Stocke l'état complet du jeu (joueurs, matchs, paris) dans Upstash Redis
+// Stocke l'état complet du jeu (joueurs, matchs, paris) dans Vercel Blob
 // pour que tous les copains voient la même partie depuis leur téléphone.
 //
-// Configuration requise (Vercel Dashboard → Storage → Upstash Redis) :
-// les variables UPSTASH_REDIS_REST_URL / UPSTASH_REDIS_REST_TOKEN
-// (ou KV_REST_API_URL / KV_REST_API_TOKEN) sont créées automatiquement.
-// Sans elles, l'API répond 503 et l'appli fonctionne en mode local.
+// Le store Blob "pronoxp" est relié au projet : la variable
+// BLOB_READ_WRITE_TOKEN est fournie automatiquement par Vercel.
+// Sans elle, l'API répond 503 et l'appli fonctionne en mode local.
 
-const KEY = 'pronoxp:cdm2026';
+import { put, list } from '@vercel/blob';
+
+const PATH = 'pronoxp/state.json';
 const MAX_BYTES = 200_000; // garde-fou : l'état du jeu reste tout petit
 
+async function readState() {
+  const { blobs } = await list({ prefix: PATH });
+  const blob = blobs.find((b) => b.pathname === PATH);
+  if (!blob) return { v: 0, data: null };
+  // paramètre unique pour contourner le cache CDN et lire la dernière version
+  const r = await fetch(`${blob.url}?nocache=${Date.now()}`, { cache: 'no-store' });
+  if (!r.ok) throw new Error(`blob read ${r.status}`);
+  return r.json();
+}
+
 export default async function handler(req, res) {
-  const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
-  if (!url || !token) {
+  if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return res.status(503).json({ error: 'not-configured' });
   }
 
-  const redis = async (cmd) => {
-    const r = await fetch(url, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(cmd),
-    });
-    if (!r.ok) throw new Error(`redis ${r.status}`);
-    return r.json();
-  };
-
   try {
     if (req.method === 'GET') {
-      const { result } = await redis(['GET', KEY]);
-      return res.status(200).json(result ? JSON.parse(result) : { v: 0, data: null });
+      return res.status(200).json(await readState());
     }
 
     if (req.method === 'POST') {
@@ -44,12 +42,17 @@ export default async function handler(req, res) {
       }
       // Contrôle de version optimiste : si quelqu'un a écrit entre-temps,
       // on refuse pour que le client récupère la version la plus récente.
-      const cur = await redis(['GET', KEY]);
-      const curV = cur.result ? JSON.parse(cur.result).v : 0;
-      if (v !== curV) {
-        return res.status(409).json({ error: 'conflict', v: curV });
+      const cur = await readState();
+      if (v !== cur.v) {
+        return res.status(409).json({ error: 'conflict', v: cur.v });
       }
-      await redis(['SET', KEY, payload]);
+      await put(PATH, payload, {
+        access: 'public',
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        contentType: 'application/json',
+        cacheControlMaxAge: 60, // minimum Vercel ; les lectures contournent le cache
+      });
       return res.status(200).json({ ok: true, v: v + 1 });
     }
 
