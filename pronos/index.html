@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRONO'XP — Paris entre copains · Coupe du Monde 2026</title>
+<style>
+  :root {
+    --bg: #0d1b2a;
+    --bg2: #1b263b;
+    --card: #22334d;
+    --card-hover: #2a3d5c;
+    --accent: #00e676;
+    --accent2: #ffd60a;
+    --danger: #ff5c5c;
+    --text: #e8eef5;
+    --muted: #93a5bd;
+    --radius: 14px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 60%, #12263f 100%);
+    min-height: 100vh;
+    color: var(--text);
+    padding-bottom: 90px;
+  }
+
+  /* ---------- Header ---------- */
+  header {
+    text-align: center;
+    padding: 28px 16px 18px;
+  }
+  header .ball { font-size: 42px; }
+  header h1 {
+    font-size: clamp(26px, 6vw, 40px);
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 800;
+  }
+  header p { color: var(--muted); margin-top: 4px; font-size: 14px; }
+
+  main { max-width: 720px; margin: 0 auto; padding: 0 14px; }
+
+  /* ---------- Tabs (bottom nav) ---------- */
+  nav {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background: rgba(13, 27, 42, 0.97);
+    border-top: 1px solid #31456a;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 4px calc(8px + env(safe-area-inset-bottom));
+    z-index: 50;
+    backdrop-filter: blur(8px);
+  }
+  nav button {
+    background: none; border: none;
+    color: var(--muted);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+    padding: 4px 10px;
+    border-radius: 10px;
+    transition: 0.15s;
+    font-family: inherit;
+  }
+  nav button .ico { font-size: 22px; }
+  nav button.active { color: var(--accent); background: rgba(0, 230, 118, 0.1); }
+
+  /* ---------- Cards & sections ---------- */
+  section { display: none; animation: fadeIn 0.25s ease; }
+  section.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    border: 1px solid #31456a;
+  }
+  h2 { font-size: 18px; margin-bottom: 12px; color: var(--accent2); }
+  .hint { color: var(--muted); font-size: 13px; margin-bottom: 12px; line-height: 1.5; }
+
+  /* ---------- Forms ---------- */
+  input, select {
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 10px;
+    border: 1px solid #3d5378;
+    background: #16233a;
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 10px;
+    font-family: inherit;
+  }
+  input:focus, select:focus { outline: 2px solid var(--accent); border-color: transparent; }
+  label { font-size: 13px; color: var(--muted); display: block; margin-bottom: 4px; }
+  .row { display: flex; gap: 10px; }
+  .row > * { flex: 1; }
+
+  button.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, var(--accent), #00c853);
+    color: #06281a;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.15s;
+    font-family: inherit;
+  }
+  button.btn:hover { filter: brightness(1.1); }
+  button.btn.secondary { background: #3d5378; color: var(--text); }
+  button.btn.danger { background: transparent; border: 1px solid var(--danger); color: var(--danger); }
+  button.mini {
+    background: none; border: 1px solid #3d5378; color: var(--muted);
+    border-radius: 8px; padding: 4px 10px; font-size: 12px; cursor: pointer;
+    font-family: inherit;
+  }
+  button.mini:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ---------- Players ---------- */
+  .player-line {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #31456a;
+  }
+  .player-line:last-child { border-bottom: none; }
+  .avatar {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    background: #16233a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .player-line .name { flex: 1; font-weight: 600; }
+  .xp-badge {
+    background: rgba(255, 214, 10, 0.12);
+    color: var(--accent2);
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 14px;
+    white-space: nowrap;
+  }
+
+  /* ---------- Matches ---------- */
+  .match-card { position: relative; }
+  .match-teams {
+    display: flex; align-items: center; justify-content: center; gap: 14px;
+    font-size: 17px; font-weight: 700;
+    margin: 6px 0;
+    flex-wrap: wrap;
+    text-align: center;
+  }
+  .match-teams .vs { color: var(--muted); font-size: 13px; font-weight: 400; }
+  .match-teams .score { color: var(--accent); font-size: 22px; }
+  .match-meta { text-align: center; color: var(--muted); font-size: 12.5px; }
+  .tag {
+    display: inline-block;
+    font-size: 11px; font-weight: 700;
+    padding: 3px 9px; border-radius: 20px;
+    margin-bottom: 6px;
+  }
+  .tag.open { background: rgba(0, 230, 118, 0.15); color: var(--accent); }
+  .tag.done { background: rgba(147, 165, 189, 0.15); color: var(--muted); }
+  .match-actions { display: flex; gap: 8px; margin-top: 12px; }
+  .match-actions > * { flex: 1; }
+  .bets-on-match { margin-top: 10px; font-size: 13px; color: var(--muted); }
+  .bets-on-match span.win { color: var(--accent); font-weight: 600; }
+  .bets-on-match span.lose { color: var(--danger); }
+
+  /* ---------- Bet form ---------- */
+  .pick-btns { display: flex; gap: 8px; margin-bottom: 10px; }
+  .pick-btns button {
+    flex: 1;
+    padding: 12px 4px;
+    border-radius: 10px;
+    border: 1px solid #3d5378;
+    background: #16233a;
+    color: var(--text);
+    cursor: pointer;
+    font-size: 13.5px;
+    font-family: inherit;
+    transition: 0.15s;
+  }
+  .pick-btns button.selected {
+    border-color: var(--accent);
+    background: rgba(0, 230, 118, 0.12);
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .payout-preview {
+    text-align: center;
+    background: rgba(255, 214, 10, 0.08);
+    border: 1px dashed rgba(255, 214, 10, 0.4);
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--accent2);
+  }
+
+  /* ---------- Leaderboard ---------- */
+  .podium {
+    display: flex; align-items: flex-end; justify-content: center; gap: 10px;
+    margin-bottom: 18px;
+  }
+  .podium .step {
+    flex: 1; max-width: 130px;
+    text-align: center;
+    background: var(--card);
+    border: 1px solid #31456a;
+    border-radius: 12px 12px 0 0;
+    padding: 12px 6px 10px;
+  }
+  .podium .step .avatar { margin: 0 auto 6px; }
+  .podium .step .pname { font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .podium .step .pxp { font-size: 12px; color: var(--accent2); font-weight: 700; }
+  .podium .rank1 { padding-top: 26px; border-color: var(--accent2); }
+  .podium .rank2 { padding-top: 16px; }
+  .podium .medal { font-size: 22px; }
+  .lb-line {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #31456a;
+  }
+  .lb-line:last-child { border-bottom: none; }
+  .lb-line .pos { width: 26px; text-align: center; font-weight: 700; color: var(--muted); }
+  .lb-line .name { flex: 1; font-weight: 600; }
+  .lb-line .stats { font-size: 12px; color: var(--muted); }
+
+  .empty {
+    text-align: center; color: var(--muted); padding: 26px 10px; font-size: 14px;
+    line-height: 1.6;
+  }
+  .empty .big { font-size: 38px; display: block; margin-bottom: 8px; }
+
+  /* ---------- Toast ---------- */
+  #toast {
+    position: fixed;
+    top: 16px; left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: var(--accent);
+    color: #06281a;
+    font-weight: 700;
+    padding: 12px 22px;
+    border-radius: 30px;
+    z-index: 100;
+    transition: transform 0.3s ease;
+    font-size: 14px;
+    max-width: 90vw;
+    text-align: center;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+  #toast.error { background: var(--danger); color: #fff; }
+
+  .disclaimer {
+    text-align: center; font-size: 11.5px; color: var(--muted);
+    margin: 18px 0 6px; padding: 0 16px; line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ball">⚽🏆</div>
+  <h1>PRONO'XP</h1>
+  <p>Paris entre copains · Coupe du Monde 2026 · 100&nbsp;% XP, 0&nbsp;% argent</p>
+</header>
+
+<main>
+
+  <!-- ============ JOUEURS ============ -->
+  <section id="tab-players" class="active">
+    <div class="card">
+      <h2>👥 Ajouter un joueur</h2>
+      <p class="hint">Chaque joueur démarre avec <b>1000 XP</b>. À toi de faire fructifier ton capital avec tes pronos !</p>
+      <div class="row">
+        <div style="flex:0 0 90px">
+          <label>Avatar</label>
+          <select id="p-emoji">
+            <option>😎</option><option>🦁</option><option>🐐</option><option>🔥</option>
+            <option>🚀</option><option>🧙</option><option>🐙</option><option>🤖</option>
+            <option>🦊</option><option>👑</option><option>⚡</option><option>🍕</option>
+          </select>
+        </div>
+        <div>
+          <label>Prénom / pseudo</label>
+          <input id="p-name" placeholder="Ex : Lucas" maxlength="20">
+        </div>
+      </div>
+      <button class="btn" onclick="addPlayer()">Ajouter le joueur</button>
+    </div>
+    <div class="card">
+      <h2>🎮 Les joueurs</h2>
+      <div id="players-list"></div>
+    </div>
+  </section>
+
+  <!-- ============ MATCHS ============ -->
+  <section id="tab-matches">
+    <div class="card">
+      <h2>➕ Ajouter un match</h2>
+      <div class="row">
+        <div><label>Équipe 1</label><input id="m-teamA" placeholder="Ex : France" maxlength="25"></div>
+        <div><label>Équipe 2</label><input id="m-teamB" placeholder="Ex : Brésil" maxlength="25"></div>
+      </div>
+      <div class="row">
+        <div><label>Phase</label>
+          <select id="m-stage">
+            <option>Phase de groupes</option><option>16es de finale</option>
+            <option>8es de finale</option><option>Quarts de finale</option>
+            <option>Demi-finale</option><option>Petite finale</option><option selected>Finale</option>
+          </select>
+        </div>
+        <div><label>Date du match</label><input id="m-date" type="date"></div>
+      </div>
+      <button class="btn" onclick="addMatch()">Ajouter le match</button>
+    </div>
+    <div id="matches-list"></div>
+  </section>
+
+  <!-- ============ PARIER ============ -->
+  <section id="tab-bet">
+    <div class="card">
+      <h2>🎯 Placer un pari</h2>
+      <p class="hint">
+        💰 <b>Bon vainqueur (ou nul)</b> : tu gagnes <b>2× ta mise</b>.<br>
+        🎯 <b>Score exact en bonus</b> : tu gagnes <b>5× ta mise</b> !<br>
+        ❌ Prono raté : la mise est perdue. Mise minimum : 10 XP.
+      </p>
+      <label>Qui parie ?</label>
+      <select id="b-player" onchange="renderBetForm()"></select>
+      <label>Sur quel match ?</label>
+      <select id="b-match" onchange="renderBetForm()"></select>
+      <div id="bet-form-body"></div>
+    </div>
+    <div class="card">
+      <h2>📜 Historique des paris</h2>
+      <div id="bets-history"></div>
+    </div>
+  </section>
+
+  <!-- ============ CLASSEMENT ============ -->
+  <section id="tab-ranking">
+    <div class="card">
+      <h2>🏆 Classement général</h2>
+      <div id="ranking"></div>
+    </div>
+    <div class="card">
+      <h2>⚙️ Gestion</h2>
+      <p class="hint">Les données sont sauvegardées automatiquement dans ce navigateur.</p>
+      <button class="btn danger" onclick="resetAll()">🗑️ Tout remettre à zéro</button>
+    </div>
+  </section>
+
+</main>
+
+<p class="disclaimer">
+  Jeu 100 % gratuit entre amis — les XP sont des points virtuels sans aucune valeur monétaire.
+  Aucun argent réel ne peut être misé, gagné ou échangé.
+</p>
+
+<nav>
+  <button data-tab="tab-players" class="active" onclick="showTab(this)"><span class="ico">👥</span>Joueurs</button>
+  <button data-tab="tab-matches" onclick="showTab(this)"><span class="ico">⚽</span>Matchs</button>
+  <button data-tab="tab-bet" onclick="showTab(this)"><span class="ico">🎯</span>Parier</button>
+  <button data-tab="tab-ranking" onclick="showTab(this)"><span class="ico">🏆</span>Classement</button>
+</nav>
+
+<div id="toast"></div>
+
+<script>
+/* =========================================================
+   PRONO'XP — mini appli de paris en XP entre copains
+   Données 100 % locales (localStorage), aucun serveur.
+   ========================================================= */
+const STORAGE_KEY = 'pronoxp-cdm2026';
+const START_XP = 1000;
+const MIN_STAKE = 10;
+const WIN_MULT = 2;   // bon vainqueur / nul
+const EXACT_MULT = 5; // score exact
+
+let state = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) { /* données corrompues → on repart à neuf */ }
+  return {
+    players: [],
+    matches: [
+      { id: uid(), teamA: 'France', teamB: 'Brésil', stage: 'Demi-finale', date: '2026-07-14', scoreA: null, scoreB: null },
+      { id: uid(), teamA: 'Espagne', teamB: 'Argentine', stage: 'Demi-finale', date: '2026-07-15', scoreA: null, scoreB: null },
+    ],
+    bets: [],
+  };
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function uid() { return Math.random().toString(36).slice(2, 10); }
+
+/* ---------- Helpers ---------- */
+const $ = (id) => document.getElementById(id);
+function player(id) { return state.players.find(p => p.id === id); }
+function match(id) { return state.matches.find(m => m.id === id); }
+function isDone(m) { return m.scoreA !== null && m.scoreB !== null; }
+function outcome(m) { return m.scoreA > m.scoreB ? '1' : m.scoreA < m.scoreB ? '2' : 'N'; }
+function esc(s) { return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+function toast(msg, isError = false) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.className = isError ? 'error show' : 'show';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ---------- Navigation ---------- */
+function showTab(btn) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+  btn.classList.add('active');
+  $(btn.dataset.tab).classList.add('active');
+  renderAll();
+}
+
+/* ---------- Joueurs ---------- */
+function addPlayer() {
+  const name = $('p-name').value.trim();
+  if (!name) return toast('Entre un prénom ou un pseudo !', true);
+  if (state.players.some(p => p.name.toLowerCase() === name.toLowerCase()))
+    return toast('Ce joueur existe déjà !', true);
+  state.players.push({ id: uid(), name, emoji: $('p-emoji').value, xp: START_XP });
+  $('p-name').value = '';
+  save(); renderAll();
+  toast(`${name} rejoint la partie avec ${START_XP} XP ! 🎉`);
+}
+
+function removePlayer(id) {
+  const p = player(id);
+  if (!confirm(`Supprimer ${p.name} et tous ses paris ?`)) return;
+  state.players = state.players.filter(x => x.id !== id);
+  state.bets = state.bets.filter(b => b.playerId !== id);
+  save(); renderAll();
+}
+
+function renderPlayers() {
+  const el = $('players-list');
+  if (!state.players.length) {
+    el.innerHTML = `<div class="empty"><span class="big">🫥</span>Aucun joueur pour l'instant.<br>Ajoute les copains ci-dessus !</div>`;
+    return;
+  }
+  el.innerHTML = state.players.map(p => `
+    <div class="player-line">
+      <div class="avatar">${p.emoji}</div>
+      <div class="name">${esc(p.name)}</div>
+      <div class="xp-badge">${p.xp} XP</div>
+      <button class="mini" onclick="removePlayer('${p.id}')">✕</button>
+    </div>`).join('');
+}
+
+/* ---------- Matchs ---------- */
+function addMatch() {
+  const teamA = $('m-teamA').value.trim();
+  const teamB = $('m-teamB').value.trim();
+  if (!teamA || !teamB) return toast('Il faut deux équipes !', true);
+  state.matches.push({
+    id: uid(), teamA, teamB,
+    stage: $('m-stage').value,
+    date: $('m-date').value || null,
+    scoreA: null, scoreB: null,
+  });
+  $('m-teamA').value = ''; $('m-teamB').value = '';
+  save(); renderAll();
+  toast(`Match ajouté : ${teamA} – ${teamB} ⚽`);
+}
+
+function removeMatch(id) {
+  const m = match(id);
+  const linked = state.bets.filter(b => b.matchId === id && !b.settled);
+  let msg = `Supprimer ${m.teamA} – ${m.teamB} ?`;
+  if (linked.length) msg += `\n${linked.length} pari(s) en cours seront remboursés.`;
+  if (!confirm(msg)) return;
+  // rembourser les paris non réglés
+  linked.forEach(b => { const p = player(b.playerId); if (p) p.xp += b.stake; });
+  state.bets = state.bets.filter(b => b.matchId !== id);
+  state.matches = state.matches.filter(x => x.id !== id);
+  save(); renderAll();
+}
+
+function enterResult(id) {
+  const m = match(id);
+  const sA = prompt(`Score de ${m.teamA} ?`);
+  if (sA === null) return;
+  const sB = prompt(`Score de ${m.teamB} ?`);
+  if (sB === null) return;
+  const a = parseInt(sA, 10), b = parseInt(sB, 10);
+  if (isNaN(a) || isNaN(b) || a < 0 || b < 0) return toast('Scores invalides !', true);
+  m.scoreA = a; m.scoreB = b;
+  settleBets(m);
+  save(); renderAll();
+  toast(`Résultat enregistré : ${m.teamA} ${a} – ${b} ${m.teamB} ✅`);
+}
+
+function settleBets(m) {
+  const res = outcome(m);
+  state.bets.filter(b => b.matchId === m.id && !b.settled).forEach(b => {
+    const p = player(b.playerId);
+    b.settled = true;
+    const exact = b.exactA !== null && b.exactA === m.scoreA && b.exactB === m.scoreB;
+    if (exact) b.gain = b.stake * EXACT_MULT;
+    else if (b.pick === res) b.gain = b.stake * WIN_MULT;
+    else b.gain = 0;
+    if (p && b.gain > 0) p.xp += b.gain;
+  });
+}
+
+function matchDateLabel(m) {
+  if (!m.date) return '';
+  const d = new Date(m.date + 'T12:00:00');
+  return ' · ' + d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function renderMatches() {
+  const el = $('matches-list');
+  if (!state.matches.length) {
+    el.innerHTML = `<div class="empty"><span class="big">📭</span>Aucun match.<br>Ajoute les prochaines affiches de la Coupe du Monde !</div>`;
+    return;
+  }
+  const sorted = [...state.matches].sort((a, b) => (isDone(a) ? 1 : 0) - (isDone(b) ? 1 : 0));
+  el.innerHTML = sorted.map(m => {
+    const done = isDone(m);
+    const bets = state.bets.filter(b => b.matchId === m.id);
+    const betLines = bets.map(b => {
+      const p = player(b.playerId);
+      if (!p) return '';
+      const pickLabel = b.pick === '1' ? m.teamA : b.pick === '2' ? m.teamB : 'Match nul';
+      const exactTxt = b.exactA !== null ? ` (${b.exactA}-${b.exactB})` : '';
+      let status = '⏳';
+      if (b.settled) status = b.gain > 0 ? `<span class="win">+${b.gain} XP 🎉</span>` : `<span class="lose">-${b.stake} XP</span>`;
+      return `<div>${p.emoji} <b>${esc(p.name)}</b> → ${esc(pickLabel)}${exactTxt} · mise ${b.stake} XP · ${status}</div>`;
+    }).join('');
+    return `
+    <div class="card match-card">
+      <div style="text-align:center">
+        <span class="tag ${done ? 'done' : 'open'}">${done ? 'Terminé' : 'Paris ouverts'} · ${esc(m.stage)}</span>
+      </div>
+      <div class="match-teams">
+        <span>${esc(m.teamA)}</span>
+        ${done ? `<span class="score">${m.scoreA} – ${m.scoreB}</span>` : `<span class="vs">VS</span>`}
+        <span>${esc(m.teamB)}</span>
+      </div>
+      <div class="match-meta">🏟️ Coupe du Monde 2026${matchDateLabel(m)}</div>
+      ${betLines ? `<div class="bets-on-match">${betLines}</div>` : ''}
+      <div class="match-actions">
+        ${!done ? `<button class="btn secondary" onclick="enterResult('${m.id}')">📝 Entrer le résultat</button>` : ''}
+        <button class="btn danger" onclick="removeMatch('${m.id}')">Supprimer</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Paris ---------- */
+let currentPick = null;
+
+function renderBetSelectors() {
+  const pSel = $('b-player'), mSel = $('b-match');
+  const prevP = pSel.value, prevM = mSel.value;
+  pSel.innerHTML = state.players.map(p =>
+    `<option value="${p.id}">${p.emoji} ${esc(p.name)} — ${p.xp} XP</option>`).join('')
+    || '<option value="">Aucun joueur — va dans l\'onglet Joueurs</option>';
+  const open = state.matches.filter(m => !isDone(m));
+  mSel.innerHTML = open.map(m =>
+    `<option value="${m.id}">${esc(m.teamA)} – ${esc(m.teamB)} (${esc(m.stage)})</option>`).join('')
+    || '<option value="">Aucun match ouvert</option>';
+  if ([...pSel.options].some(o => o.value === prevP)) pSel.value = prevP;
+  if ([...mSel.options].some(o => o.value === prevM)) mSel.value = prevM;
+}
+
+function renderBetForm() {
+  currentPick = null;
+  const body = $('bet-form-body');
+  const p = player($('b-player').value);
+  const m = match($('b-match').value);
+  if (!p || !m) { body.innerHTML = `<div class="empty">Ajoute au moins un joueur et un match pour parier ! 😉</div>`; return; }
+  const existing = state.bets.find(b => b.playerId === p.id && b.matchId === m.id);
+  if (existing) {
+    body.innerHTML = `<div class="empty"><span class="big">✋</span><b>${esc(p.name)}</b> a déjà parié sur ce match.<br>Un seul pari par match et par joueur !</div>`;
+    return;
+  }
+  if (p.xp < MIN_STAKE) {
+    body.innerHTML = `<div class="empty"><span class="big">💸</span><b>${esc(p.name)}</b> n'a plus assez d'XP (minimum ${MIN_STAKE}).<br>Il faudra attendre la prochaine partie… ou négocier un prêt entre copains 😄</div>`;
+    return;
+  }
+  body.innerHTML = `
+    <label>Ton prono</label>
+    <div class="pick-btns">
+      <button id="pick-1" onclick="setPick('1')">🏠 ${esc(m.teamA)}</button>
+      <button id="pick-N" onclick="setPick('N')">🤝 Nul</button>
+      <button id="pick-2" onclick="setPick('2')">✈️ ${esc(m.teamB)}</button>
+    </div>
+    <label>Score exact (facultatif — pour tenter le ×${EXACT_MULT} !)</label>
+    <div class="row">
+      <input id="b-exactA" type="number" min="0" max="20" placeholder="${esc(m.teamA)}" oninput="updatePayout()">
+      <input id="b-exactB" type="number" min="0" max="20" placeholder="${esc(m.teamB)}" oninput="updatePayout()">
+    </div>
+    <label>Mise (XP) — dispo : ${p.xp} XP</label>
+    <input id="b-stake" type="number" min="${MIN_STAKE}" max="${p.xp}" value="${Math.min(100, p.xp)}" oninput="updatePayout()">
+    <div class="payout-preview" id="payout-preview">Choisis ton prono ! ⚽</div>
+    <button class="btn" onclick="placeBet()">🎯 Valider le pari</button>`;
+}
+
+function setPick(pick) {
+  currentPick = pick;
+  ['1', 'N', '2'].forEach(k => $('pick-' + k).classList.toggle('selected', k === pick));
+  updatePayout();
+}
+
+function updatePayout() {
+  const el = $('payout-preview');
+  if (!el) return;
+  const stake = parseInt($('b-stake').value, 10) || 0;
+  const hasExact = $('b-exactA').value !== '' && $('b-exactB').value !== '';
+  if (!currentPick) { el.textContent = 'Choisis ton prono ! ⚽'; return; }
+  let txt = `Gain possible : ${stake * WIN_MULT} XP (bon vainqueur)`;
+  if (hasExact) txt += ` · ${stake * EXACT_MULT} XP si score exact 🎯`;
+  el.textContent = txt;
+}
+
+function placeBet() {
+  const p = player($('b-player').value);
+  const m = match($('b-match').value);
+  if (!p || !m) return;
+  if (!currentPick) return toast('Choisis un prono (équipe 1, nul ou équipe 2) !', true);
+  const stake = parseInt($('b-stake').value, 10);
+  if (isNaN(stake) || stake < MIN_STAKE) return toast(`Mise minimum : ${MIN_STAKE} XP !`, true);
+  if (stake > p.xp) return toast(`${p.name} n'a que ${p.xp} XP !`, true);
+  const eA = $('b-exactA').value, eB = $('b-exactB').value;
+  let exactA = null, exactB = null;
+  if (eA !== '' || eB !== '') {
+    if (eA === '' || eB === '') return toast('Remplis les deux scores ou aucun !', true);
+    exactA = parseInt(eA, 10); exactB = parseInt(eB, 10);
+    if (isNaN(exactA) || isNaN(exactB) || exactA < 0 || exactB < 0) return toast('Score exact invalide !', true);
+    const impliedPick = exactA > exactB ? '1' : exactA < exactB ? '2' : 'N';
+    if (impliedPick !== currentPick) return toast('Ton score exact ne correspond pas à ton prono !', true);
+  }
+  p.xp -= stake;
+  state.bets.push({
+    id: uid(), playerId: p.id, matchId: m.id,
+    pick: currentPick, exactA, exactB, stake,
+    settled: false, gain: null,
+  });
+  save(); renderAll();
+  toast(`Pari enregistré pour ${p.name} : ${stake} XP en jeu ! 🍀`);
+}
+
+function renderBetsHistory() {
+  const el = $('bets-history');
+  if (!state.bets.length) {
+    el.innerHTML = `<div class="empty"><span class="big">🎲</span>Aucun pari pour l'instant.<br>Qui osera parier en premier ?</div>`;
+    return;
+  }
+  el.innerHTML = [...state.bets].reverse().map(b => {
+    const p = player(b.playerId), m = match(b.matchId);
+    if (!p || !m) return '';
+    const pickLabel = b.pick === '1' ? m.teamA : b.pick === '2' ? m.teamB : 'Match nul';
+    const exactTxt = b.exactA !== null ? ` (score ${b.exactA}-${b.exactB})` : '';
+    let status = '<span style="color:var(--accent2)">⏳ en attente</span>';
+    if (b.settled) status = b.gain > 0
+      ? `<span style="color:var(--accent)">✅ +${b.gain} XP</span>`
+      : `<span style="color:var(--danger)">❌ -${b.stake} XP</span>`;
+    return `
+    <div class="player-line">
+      <div class="avatar">${p.emoji}</div>
+      <div class="name">${esc(p.name)} → ${esc(pickLabel)}${exactTxt}
+        <div class="stats" style="font-size:12px;color:var(--muted)">${esc(m.teamA)} – ${esc(m.teamB)} · mise ${b.stake} XP</div>
+      </div>
+      <div style="font-size:13px;font-weight:600">${status}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Classement ---------- */
+function renderRanking() {
+  const el = $('ranking');
+  if (!state.players.length) {
+    el.innerHTML = `<div class="empty"><span class="big">🏜️</span>Pas encore de joueurs à classer !</div>`;
+    return;
+  }
+  const sorted = [...state.players].sort((a, b) => b.xp - a.xp);
+  const medals = ['🥇', '🥈', '🥉'];
+  let html = '';
+  if (sorted.length >= 2) {
+    const podium = [sorted[1], sorted[0], sorted[2]].filter(Boolean);
+    html += `<div class="podium">` + podium.map(p => {
+      const rank = sorted.indexOf(p);
+      return `<div class="step ${rank === 0 ? 'rank1' : rank === 1 ? 'rank2' : ''}">
+        <div class="medal">${medals[rank]}</div>
+        <div class="avatar">${p.emoji}</div>
+        <div class="pname">${esc(p.name)}</div>
+        <div class="pxp">${p.xp} XP</div>
+      </div>`;
+    }).join('') + `</div>`;
+  }
+  html += sorted.map((p, i) => {
+    const bets = state.bets.filter(b => b.playerId === p.id && b.settled);
+    const wins = bets.filter(b => b.gain > 0).length;
+    return `
+    <div class="lb-line">
+      <div class="pos">${medals[i] || (i + 1)}</div>
+      <div class="avatar">${p.emoji}</div>
+      <div class="name">${esc(p.name)}
+        <div class="stats">${wins}/${bets.length} paris gagnés</div>
+      </div>
+      <div class="xp-badge">${p.xp} XP</div>
+    </div>`;
+  }).join('');
+  el.innerHTML = html;
+}
+
+/* ---------- Reset ---------- */
+function resetAll() {
+  if (!confirm('Tout effacer (joueurs, matchs, paris) ? Cette action est définitive.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  state = load();
+  save(); renderAll();
+  toast('Nouvelle partie ! Tout est remis à zéro 🔄');
+}
+
+/* ---------- Render global ---------- */
+function renderAll() {
+  renderPlayers();
+  renderMatches();
+  renderBetSelectors();
+  renderBetForm();
+  renderBetsHistory();
+  renderRanking();
+}
+renderAll();
+</script>
+</body>
+</html>
