@@ -61,6 +61,13 @@
     background: rgba(255, 214, 10, 0.1);
     font-weight: 700;
   }
+  #sync-badge {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  #sync-badge.on { color: var(--accent); }
 
   main { max-width: 720px; margin: 0 auto; padding: 0 14px; }
 
@@ -296,6 +303,7 @@
   <h1>PRONO'XP</h1>
   <p>Paris entre copains · Coupe du Monde 2026 · 100&nbsp;% XP, 0&nbsp;% argent</p>
   <button id="admin-toggle" onclick="toggleAdmin()">🔒 Mode admin</button>
+  <span id="sync-badge">⏳ Connexion…</span>
 </header>
 
 <main>
@@ -435,8 +443,83 @@ function load() {
     adminPin: null,
   };
 }
-function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function save() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  if (syncMode && !adopting) schedulePush();
+}
 function uid() { return Math.random().toString(36).slice(2, 10); }
+
+/* ---------- Synchronisation partagée (API /api/pronos) ----------
+   Si la base est configurée sur Vercel, tous les téléphones voient
+   la même partie. Sinon, l'appli reste en mode local (cet appareil). */
+let syncMode = false;
+let syncV = 0;          // version de l'état côté serveur
+let adopting = false;   // vrai pendant qu'on adopte l'état reçu du serveur
+let pushTimer = null;
+
+function schedulePush() {
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(pushState, 400);
+}
+
+async function pushState() {
+  try {
+    const r = await fetch('/api/pronos', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ v: syncV, data: state }),
+    });
+    if (r.status === 409) {
+      // quelqu'un a joué en même temps : on récupère la dernière version
+      await pollSync();
+      toast("Quelqu'un a joué en même temps — vérifie et refais ton action !", true);
+      return;
+    }
+    const j = await r.json();
+    if (j.ok) syncV = j.v;
+  } catch (e) { /* hors ligne : réessai à la prochaine action */ }
+}
+
+async function pollSync() {
+  try {
+    const r = await fetch('/api/pronos');
+    if (!r.ok) return;
+    const j = await r.json();
+    if (j.data && j.v !== syncV) {
+      syncV = j.v;
+      adopting = true;
+      state = j.data;
+      save();
+      adopting = false;
+      renderAll();
+    }
+  } catch (e) { /* hors ligne */ }
+}
+
+async function initSync() {
+  try {
+    const r = await fetch('/api/pronos');
+    if (!r.ok) throw new Error('api indisponible');
+    const j = await r.json();
+    syncMode = true;
+    if (j.data) {
+      syncV = j.v;
+      adopting = true;
+      state = j.data;
+      save();
+      adopting = false;
+    } else {
+      await pushState(); // première connexion : l'état local sert de départ
+    }
+    setInterval(pollSync, 10000);
+  } catch (e) {
+    syncMode = false;
+  }
+  const badge = $('sync-badge');
+  badge.textContent = syncMode ? '☁️ Partie partagée — tout le monde voit la même chose' : '📱 Mode local — données sur cet appareil uniquement';
+  badge.className = syncMode ? 'on' : '';
+  renderAll();
+}
 
 /* ---------- Helpers ---------- */
 const $ = (id) => document.getElementById(id);
@@ -847,6 +930,7 @@ function renderAll() {
   renderRanking();
 }
 renderAll();
+initSync();
 </script>
 </body>
 </html>
