@@ -484,10 +484,12 @@ async function pushState() {
 
 async function pollSync() {
   try {
-    const r = await fetch('/api/pronos');
+    const r = await fetch('/api/pronos?t=' + Date.now(), { cache: 'no-store' });
     if (!r.ok) return;
     const j = await r.json();
-    if (j.data && j.v !== syncV) {
+    // on n'adopte que les versions PLUS RÉCENTES (jamais de retour en arrière
+    // à cause d'une réponse retardée ou mise en cache)
+    if (j.data && j.v > syncV) {
       syncV = j.v;
       adopting = true;
       state = j.data;
@@ -500,7 +502,7 @@ async function pollSync() {
 
 async function initSync() {
   try {
-    const r = await fetch('/api/pronos');
+    const r = await fetch('/api/pronos?t=' + Date.now(), { cache: 'no-store' });
     if (!r.ok) throw new Error('api indisponible');
     const j = await r.json();
     syncMode = true;
@@ -514,6 +516,9 @@ async function initSync() {
       await pushState(); // première connexion : l'état local sert de départ
     }
     setInterval(pollSync, 10000);
+    // au retour sur l'onglet (téléphone sorti de veille), on se remet à jour
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) pollSync(); });
+    window.addEventListener('focus', pollSync);
   } catch (e) {
     syncMode = false;
   }
@@ -868,14 +873,15 @@ function updatePayout() {
   el.textContent = txt;
 }
 
-function placeBet() {
-  const p = me();
-  const m = match($('b-match').value);
-  if (!p || !m) return;
-  if (!currentPick) return toast('Choisis un prono (équipe 1, nul ou équipe 2) !', true);
+async function placeBet() {
+  // on capture tout AVANT la synchro (qui peut redessiner le formulaire)
+  let p = me();
+  const mId = $('b-match').value;
+  const pick = currentPick;
+  if (!p || !match(mId)) return;
+  if (!pick) return toast('Choisis un prono (équipe 1, nul ou équipe 2) !', true);
   const stake = parseInt($('b-stake').value, 10);
   if (isNaN(stake) || stake < MIN_STAKE) return toast(`Mise minimum : ${MIN_STAKE} XP !`, true);
-  if (stake > p.xp) return toast(`${p.name} n'a que ${p.xp} XP !`, true);
   const eA = $('b-exactA').value, eB = $('b-exactB').value;
   let exactA = null, exactB = null;
   if (eA !== '' || eB !== '') {
@@ -883,12 +889,24 @@ function placeBet() {
     exactA = parseInt(eA, 10); exactB = parseInt(eB, 10);
     if (isNaN(exactA) || isNaN(exactB) || exactA < 0 || exactB < 0) return toast('Score exact invalide !', true);
     const impliedPick = exactA > exactB ? '1' : exactA < exactB ? '2' : 'N';
-    if (impliedPick !== currentPick) return toast('Ton score exact ne correspond pas à ton prono !', true);
+    if (impliedPick !== pick) return toast('Ton score exact ne correspond pas à ton prono !', true);
   }
+  // on récupère la toute dernière version de la partie avant d'engager la mise
+  // (indispensable quand le téléphone sort de veille)
+  if (syncMode) await pollSync();
+  p = me();
+  const m = match(mId);
+  if (!p) return toast('Ton joueur a été supprimé — choisis un profil !', true);
+  if (!m || isDone(m)) return toast('Trop tard, ce match est déjà terminé !', true);
+  if (state.bets.some(b => b.playerId === p.id && b.matchId === m.id)) {
+    renderAll();
+    return toast('Tu as déjà un pari sur ce match !', true);
+  }
+  if (stake > p.xp) return toast(`${p.name} n'a que ${p.xp} XP !`, true);
   p.xp -= stake;
   state.bets.push({
     id: uid(), playerId: p.id, matchId: m.id,
-    pick: currentPick, exactA, exactB, stake,
+    pick, exactA, exactB, stake,
     settled: false, gain: null,
   });
   save(); renderAll();

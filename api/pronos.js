@@ -22,6 +22,9 @@ async function readState() {
 }
 
 export default async function handler(req, res) {
+  // jamais de cache : chaque lecture doit refléter le dernier pari
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+
   if (!process.env.BLOB_READ_WRITE_TOKEN) {
     return res.status(503).json({ error: 'not-configured' });
   }
