@@ -630,9 +630,54 @@ function me() {
 function claimPlayer() {
   const sel = $('me-select');
   if (!sel || !sel.value) return;
-  localStorage.setItem(ME_KEY, sel.value);
+  const p = player(sel.value);
+  if (!p) return;
+  if (!p.pin) {
+    // première connexion : le joueur choisit son code personnel
+    const pin1 = prompt(`${p.name}, c'est ta première connexion !\nChoisis ton code personnel (4 caractères minimum) :`);
+    if (!pin1) return;
+    if (pin1.trim().length < 4) return toast('Le code doit faire au moins 4 caractères !', true);
+    const pin2 = prompt('Confirme ton code :');
+    if (pin2 !== pin1) return toast('Les deux codes ne correspondent pas !', true);
+    p.pin = encodePin(pin1.trim());
+    save();
+    toast(`Code créé — ton profil est protégé, ${p.name} ! 🔐`);
+  } else {
+    const pin = prompt(`Code personnel de ${p.name} :`);
+    if (pin === null) return;
+    if (encodePin(pin.trim()) !== p.pin) return toast('Mauvais code ! 🙅 (Jules peut le réinitialiser si tu l\'as oublié)', true);
+  }
+  localStorage.setItem(ME_KEY, p.id);
   renderAll();
-  toast(`Salut ${player(sel.value).name} ! Bonne chance pour tes pronos 🍀`);
+  toast(`Salut ${p.name} ! Bonne chance pour tes pronos 🍀`);
+}
+
+function setMyPin() {
+  const p = me();
+  if (!p) return;
+  if (p.pin) {
+    const old = prompt('Ton code actuel :');
+    if (old === null) return;
+    if (encodePin(old.trim()) !== p.pin) return toast('Mauvais code ! 🙅', true);
+  }
+  const pin1 = prompt('Nouveau code personnel (4 caractères minimum) :');
+  if (!pin1) return;
+  if (pin1.trim().length < 4) return toast('Le code doit faire au moins 4 caractères !', true);
+  const pin2 = prompt('Confirme ton code :');
+  if (pin2 !== pin1) return toast('Les deux codes ne correspondent pas !', true);
+  p.pin = encodePin(pin1.trim());
+  save(); renderAll();
+  toast('Code personnel enregistré 🔐');
+}
+
+function resetPlayerPin(id) {
+  if (!requireAdmin()) return;
+  const p = player(id);
+  if (!p) return;
+  if (!confirm(`Réinitialiser le code personnel de ${p.name} ?\nIl choisira un nouveau code à sa prochaine connexion.`)) return;
+  p.pin = null;
+  save(); renderAll();
+  toast(`Code de ${p.name} réinitialisé ✅`);
 }
 
 function unclaim() {
@@ -648,16 +693,17 @@ function renderMe() {
     <div class="player-line" style="border:none;padding:4px 0">
       <div class="avatar">${p.emoji}</div>
       <div class="name">${esc(p.name)}
-        <div class="stats" style="font-size:12px;color:var(--muted)">C'est toi — tes paris se font avec ce joueur</div>
+        <div class="stats" style="font-size:12px;color:var(--muted)">${p.pin ? '🔐 Profil protégé par ton code' : '⚠️ Profil sans code — protège-le !'}</div>
       </div>
       <div class="xp-badge">${p.xp} XP</div>
       <button class="mini" onclick="unclaim()">changer</button>
-    </div>`;
+    </div>
+    <button class="btn secondary" style="margin-top:10px" onclick="setMyPin()">${p.pin ? '🔑 Changer mon code personnel' : '🔐 Définir mon code personnel'}</button>`;
   } else if (!state.players.length) {
     el.innerHTML = `<div class="empty"><span class="big">🙋</span>Aucun joueur pour l'instant.<br>Demande à <b>Jules</b> de créer ton joueur, puis choisis ton nom ici !</div>`;
   } else {
     el.innerHTML = `
-      <p class="hint">Choisis le nom que <b>Jules</b> t'a donné — ton téléphone s'en souviendra :</p>
+      <p class="hint">Choisis le nom que <b>Jules</b> t'a donné. À ta première connexion tu créeras ton <b>code personnel</b> ; il sera demandé pour te reconnecter (code oublié → Jules peut le réinitialiser).</p>
       <select id="me-select">
         ${state.players.map(p => `<option value="${p.id}">${p.emoji} ${esc(p.name)}</option>`).join('')}
       </select>
@@ -698,7 +744,8 @@ function renderPlayers() {
       <div class="avatar">${p.emoji}</div>
       <div class="name">${esc(p.name)}</div>
       <div class="xp-badge">${p.xp} XP</div>
-      ${isAdmin ? `<button class="mini" onclick="removePlayer('${p.id}')">✕</button>` : ''}
+      ${isAdmin ? `<button class="mini" onclick="resetPlayerPin('${p.id}')" title="Réinitialiser le code">🔑</button>
+      <button class="mini" onclick="removePlayer('${p.id}')">✕</button>` : ''}
     </div>`).join('');
 }
 
