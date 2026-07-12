@@ -1,0 +1,15 @@
+{
+  "name": "PRONO'XP — Paris entre copains",
+  "short_name": "PRONO'XP",
+  "description": "Paris en XP entre copains sur la Coupe du Monde 2026 — 100 % XP, 0 % argent",
+  "start_url": "/pronos/",
+  "scope": "/pronos/",
+  "display": "standalone",
+  "background_color": "#0d1b2a",
+  "theme_color": "#0d1b2a",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
