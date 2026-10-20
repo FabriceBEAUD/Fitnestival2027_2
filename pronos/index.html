@@ -450,17 +450,36 @@ const EXACT_MULT = 5; // score exact
 /* ---------- Compétitions ----------
    Pour en ajouter une, il suffit d'ajouter une entrée ici : le menu
    d'ajout de match, les filtres et les badges suivent automatiquement. */
+const JOURNEES = (n) => Array.from({ length: n }, (_, i) => `Journée ${i + 1}`);
+const PHASES_FINALES = ['8es de finale', 'Quarts de finale', 'Demi-finale', 'Finale'];
+
 const COMPETITIONS = [
+  // --- Sélections nationales ---
   { id: 'cdm', nom: 'Coupe du Monde', emoji: '🌍',
-    stages: ['Phase de groupes', '16es de finale', '8es de finale', 'Quarts de finale',
-             'Demi-finale', 'Petite finale', 'Finale'] },
-  { id: 'l1', nom: 'Ligue 1', emoji: '🇫🇷',
-    stages: Array.from({ length: 34 }, (_, i) => `Journée ${i + 1}`) },
-  { id: 'ldc', nom: 'Ligue des Champions', emoji: '⭐',
-    stages: ['Phase de ligue', 'Barrages', '8es de finale', 'Quarts de finale',
-             'Demi-finale', 'Finale'] },
+    stages: ['Phase de groupes', '16es de finale', ...PHASES_FINALES.slice(0, 3),
+             'Petite finale', 'Finale'] },
+  { id: 'euro', nom: 'Euro', emoji: '🇪🇺',
+    // Pas de petite finale à l'Euro : elle a disparu après l'édition 1980.
+    stages: ['Phase de groupes', ...PHASES_FINALES] },
   { id: 'ldn', nom: 'Ligue des Nations', emoji: '🏅',
     stages: ['Phase de groupes', 'Quarts de finale', 'Demi-finale', 'Petite finale', 'Finale'] },
+
+  // --- Coupes d'Europe ---
+  { id: 'ldc', nom: 'Ligue des Champions', emoji: '⭐',
+    stages: ['Phase de ligue', 'Barrages', ...PHASES_FINALES] },
+  { id: 'lde', nom: 'Ligue Europa', emoji: '🧡',
+    stages: ['Phase de ligue', 'Barrages', ...PHASES_FINALES] },
+
+  // --- France ---
+  { id: 'l1', nom: 'Ligue 1', emoji: '🇫🇷', stages: JOURNEES(34) },
+  { id: 'l2', nom: 'Ligue 2', emoji: '🥈', stages: JOURNEES(38) },
+  { id: 'cdf', nom: 'Coupe de France', emoji: '🏆',
+    stages: ['7e tour', '8e tour', '32es de finale', '16es de finale',
+             ...PHASES_FINALES.slice(0, 3), 'Finale'] },
+
+  // --- Filet de sécurité : tout le reste (amicaux, championnats étrangers…) ---
+  { id: 'autre', nom: 'Autre compétition', emoji: '⚽',
+    stages: ['Match amical', 'Match de championnat', 'Phase de groupes', ...PHASES_FINALES] },
 ];
 // Les matchs créés avant l'arrivée des compétitions sont ceux de la Coupe du Monde.
 const DEFAULT_COMP = 'cdm';

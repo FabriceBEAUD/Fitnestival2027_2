@@ -60,7 +60,9 @@ Le déploiement est automatique à chaque push sur `main`.
 ### Mini appli PRONO'XP (pronos/)
 - Jeu de paris en XP (points virtuels, pas d'argent) pour Jules (fils de Fabrice) et ses copains
 - URL : `/pronos/` — indépendante du site festival
-- Plusieurs compétitions : Coupe du Monde, Ligue 1, Ligue des Champions, Ligue des Nations.
+- Neuf compétitions : Coupe du Monde, Euro, Ligue des Nations, Ligue des Champions,
+  Ligue Europa, Ligue 1, Ligue 2, Coupe de France, et « Autre compétition » qui sert de
+  filet pour les amicaux et les championnats étrangers.
   La liste vit dans la constante `COMPETITIONS` de `pronos/index.html` : ajouter une entrée
   suffit, les menus, filtres et badges suivent. Chaque compétition a ses propres phases
   (journées pour la Ligue 1, phase de ligue et barrages pour la C1…).
