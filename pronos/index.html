@@ -202,6 +202,19 @@
   }
   .tag.open { background: rgba(0, 230, 118, 0.15); color: var(--accent); }
   .tag.done { background: rgba(147, 165, 189, 0.15); color: var(--muted); }
+  .tag.comp { background: rgba(255, 214, 10, 0.15); color: var(--accent2); margin-left: 5px; }
+
+  .comp-filter { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .comp-filter button {
+    background: var(--card); color: var(--muted);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px; padding: 7px 13px;
+    font-size: 12.5px; font-weight: 600; cursor: pointer;
+  }
+  .comp-filter button.on {
+    background: rgba(0, 230, 118, 0.15);
+    color: var(--accent); border-color: var(--accent);
+  }
   .match-actions { display: flex; gap: 8px; margin-top: 12px; }
   .match-actions > * { flex: 1; }
   .bets-on-match { margin-top: 10px; font-size: 13px; color: var(--muted); }
@@ -305,7 +318,7 @@
 <header>
   <div class="ball">⚽🏆</div>
   <h1>PRONO'XP</h1>
-  <p>Paris entre copains · Coupe du Monde 2026 · 100&nbsp;% XP, 0&nbsp;% argent</p>
+  <p>Paris entre copains · Toutes les compétitions · 100&nbsp;% XP, 0&nbsp;% argent</p>
   <button id="admin-toggle" onclick="toggleAdmin()">🔒 Mode admin</button>
   <span id="sync-badge">⏳ Connexion…</span>
 </header>
@@ -352,12 +365,13 @@
         <div><label>Équipe 2</label><input id="m-teamB" placeholder="Ex : Brésil" maxlength="25"></div>
       </div>
       <div class="row">
-        <div><label>Phase</label>
-          <select id="m-stage">
-            <option>Phase de groupes</option><option>16es de finale</option>
-            <option>8es de finale</option><option>Quarts de finale</option>
-            <option>Demi-finale</option><option>Petite finale</option><option selected>Finale</option>
-          </select>
+        <div><label>Compétition</label>
+          <select id="m-comp" onchange="renderStageOptions()"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div><label>Phase / journée</label>
+          <select id="m-stage"></select>
         </div>
         <div><label>Date du match</label><input id="m-date" type="date"></div>
       </div>
@@ -366,6 +380,7 @@
     <div class="card" id="match-admin-hint" style="display:none">
       <p class="hint" style="margin:0">🔑 Seul <b>Jules</b> (l'admin) peut ajouter des matchs et entrer les résultats. Les copains, vous êtes là pour parier ! 😄</p>
     </div>
+    <div class="comp-filter" id="comp-filter"></div>
     <div id="matches-list"></div>
   </section>
 
@@ -432,6 +447,27 @@ const MIN_STAKE = 10;
 const WIN_MULT = 2;   // bon vainqueur / nul
 const EXACT_MULT = 5; // score exact
 
+/* ---------- Compétitions ----------
+   Pour en ajouter une, il suffit d'ajouter une entrée ici : le menu
+   d'ajout de match, les filtres et les badges suivent automatiquement. */
+const COMPETITIONS = [
+  { id: 'cdm', nom: 'Coupe du Monde', emoji: '🌍',
+    stages: ['Phase de groupes', '16es de finale', '8es de finale', 'Quarts de finale',
+             'Demi-finale', 'Petite finale', 'Finale'] },
+  { id: 'l1', nom: 'Ligue 1', emoji: '🇫🇷',
+    stages: Array.from({ length: 34 }, (_, i) => `Journée ${i + 1}`) },
+  { id: 'ldc', nom: 'Ligue des Champions', emoji: '⭐',
+    stages: ['Phase de ligue', 'Barrages', '8es de finale', 'Quarts de finale',
+             'Demi-finale', 'Finale'] },
+  { id: 'ldn', nom: 'Ligue des Nations', emoji: '🏅',
+    stages: ['Phase de groupes', 'Quarts de finale', 'Demi-finale', 'Petite finale', 'Finale'] },
+];
+// Les matchs créés avant l'arrivée des compétitions sont ceux de la Coupe du Monde.
+const DEFAULT_COMP = 'cdm';
+
+function comp(id) { return COMPETITIONS.find(c => c.id === id) || COMPETITIONS[0]; }
+function compOf(m) { return comp(m.competition || DEFAULT_COMP); }
+
 let state = load();
 
 function load() {
@@ -442,8 +478,8 @@ function load() {
   return {
     players: [],
     matches: [
-      { id: uid(), teamA: 'France', teamB: 'Brésil', stage: 'Demi-finale', date: '2026-07-14', scoreA: null, scoreB: null },
-      { id: uid(), teamA: 'Espagne', teamB: 'Argentine', stage: 'Demi-finale', date: '2026-07-15', scoreA: null, scoreB: null },
+      { id: uid(), teamA: 'France', teamB: 'Brésil', competition: 'cdm', stage: 'Demi-finale', date: '2026-07-14', scoreA: null, scoreB: null },
+      { id: uid(), teamA: 'Espagne', teamB: 'Argentine', competition: 'cdm', stage: 'Demi-finale', date: '2026-07-15', scoreA: null, scoreB: null },
     ],
     bets: [],
     adminPin: null,
@@ -754,20 +790,63 @@ function renderPlayers() {
 }
 
 /* ---------- Matchs ---------- */
+
+// Menu « Compétition » : rempli une seule fois pour ne pas écraser le choix en cours.
+function renderCompOptions() {
+  const sel = $('m-comp');
+  if (!sel || sel.options.length) return;
+  sel.innerHTML = COMPETITIONS.map(c => `<option value="${c.id}">${c.emoji} ${esc(c.nom)}</option>`).join('');
+  renderStageOptions();
+}
+
+// Les phases proposées dépendent de la compétition choisie.
+function renderStageOptions() {
+  const sel = $('m-stage');
+  if (!sel) return;
+  sel.innerHTML = comp($('m-comp').value).stages.map(s => `<option>${esc(s)}</option>`).join('');
+}
+
+let matchFilter = 'all';
+
+function setMatchFilter(id) {
+  matchFilter = id;
+  renderMatchFilter();
+  renderMatches();
+}
+
+// Le filtre n'apparaît que s'il y a au moins deux compétitions à départager.
+function renderMatchFilter() {
+  const el = $('comp-filter');
+  if (!el) return;
+  const used = COMPETITIONS.filter(c => state.matches.some(m => compOf(m).id === c.id));
+  if (used.length < 2) { el.innerHTML = ''; matchFilter = 'all'; return; }
+  if (matchFilter !== 'all' && !used.some(c => c.id === matchFilter)) matchFilter = 'all';
+  const chips = [{ id: 'all', nom: 'Toutes', emoji: '📋' }, ...used];
+  el.innerHTML = chips.map(c => {
+    const n = c.id === 'all'
+      ? state.matches.length
+      : state.matches.filter(m => compOf(m).id === c.id).length;
+    return `<button class="${matchFilter === c.id ? 'on' : ''}" onclick="setMatchFilter('${c.id}')">${c.emoji} ${esc(c.nom)} (${n})</button>`;
+  }).join('');
+}
+
 function addMatch() {
   if (!requireAdmin()) return;
   const teamA = $('m-teamA').value.trim();
   const teamB = $('m-teamB').value.trim();
   if (!teamA || !teamB) return toast('Il faut deux équipes !', true);
+  const competition = $('m-comp').value || DEFAULT_COMP;
   state.matches.push({
     id: uid(), teamA, teamB,
+    competition,
     stage: $('m-stage').value,
     date: $('m-date').value || null,
     scoreA: null, scoreB: null,
   });
   $('m-teamA').value = ''; $('m-teamB').value = '';
+  matchFilter = competition; // on montre la compétition qu'on vient d'alimenter
   save(); renderAll();
-  toast(`Match ajouté : ${teamA} – ${teamB} ⚽`);
+  toast(`Match ajouté en ${comp(competition).nom} : ${teamA} – ${teamB} ⚽`);
 }
 
 function removeMatch(id) {
@@ -821,10 +900,15 @@ function matchDateLabel(m) {
 function renderMatches() {
   const el = $('matches-list');
   if (!state.matches.length) {
-    el.innerHTML = `<div class="empty"><span class="big">📭</span>Aucun match.<br>Ajoute les prochaines affiches de la Coupe du Monde !</div>`;
+    el.innerHTML = `<div class="empty"><span class="big">📭</span>Aucun match.<br>Ajoute les prochaines affiches : Coupe du Monde, Ligue 1, Ligue des Champions…</div>`;
     return;
   }
-  const sorted = [...state.matches].sort((a, b) => (isDone(a) ? 1 : 0) - (isDone(b) ? 1 : 0));
+  const visibles = state.matches.filter(m => matchFilter === 'all' || compOf(m).id === matchFilter);
+  if (!visibles.length) {
+    el.innerHTML = `<div class="empty"><span class="big">🔍</span>Aucun match dans cette compétition pour l'instant.</div>`;
+    return;
+  }
+  const sorted = [...visibles].sort((a, b) => (isDone(a) ? 1 : 0) - (isDone(b) ? 1 : 0));
   el.innerHTML = sorted.map(m => {
     const done = isDone(m);
     const bets = state.bets.filter(b => b.matchId === m.id);
@@ -840,14 +924,15 @@ function renderMatches() {
     return `
     <div class="card match-card">
       <div style="text-align:center">
-        <span class="tag ${done ? 'done' : 'open'}">${done ? 'Terminé' : 'Paris ouverts'} · ${esc(m.stage)}</span>
+        <span class="tag ${done ? 'done' : 'open'}">${done ? 'Terminé' : 'Paris ouverts'}</span>
+        <span class="tag comp">${compOf(m).emoji} ${esc(compOf(m).nom)}</span>
       </div>
       <div class="match-teams">
         <span>${esc(m.teamA)}</span>
         ${done ? `<span class="score">${m.scoreA} – ${m.scoreB}</span>` : `<span class="vs">VS</span>`}
         <span>${esc(m.teamB)}</span>
       </div>
-      <div class="match-meta">🏟️ Coupe du Monde 2026${matchDateLabel(m)}</div>
+      <div class="match-meta">🏟️ ${esc(m.stage)}${matchDateLabel(m)}</div>
       ${betLines ? `<div class="bets-on-match">${betLines}</div>` : ''}
       ${isAdmin ? `<div class="match-actions">
         ${!done ? `<button class="btn secondary" onclick="enterResult('${m.id}')">📝 Entrer le résultat</button>` : ''}
@@ -864,9 +949,18 @@ function renderBetSelectors() {
   const mSel = $('b-match');
   const prevM = mSel.value;
   const open = state.matches.filter(m => !isDone(m));
-  mSel.innerHTML = open.map(m =>
-    `<option value="${m.id}">${esc(m.teamA)} – ${esc(m.teamB)} (${esc(m.stage)})</option>`).join('')
-    || '<option value="">Aucun match ouvert</option>';
+  if (!open.length) {
+    mSel.innerHTML = '<option value="">Aucun match ouvert</option>';
+    return;
+  }
+  // regroupés par compétition pour s'y retrouver quand la liste s'allonge
+  mSel.innerHTML = COMPETITIONS.map(c => {
+    const ms = open.filter(m => compOf(m).id === c.id);
+    if (!ms.length) return '';
+    return `<optgroup label="${c.emoji} ${esc(c.nom)}">`
+      + ms.map(m => `<option value="${m.id}">${esc(m.teamA)} – ${esc(m.teamB)} (${esc(m.stage)})</option>`).join('')
+      + `</optgroup>`;
+  }).join('');
   if ([...mSel.options].some(o => o.value === prevM)) mSel.value = prevM;
 }
 
@@ -983,7 +1077,7 @@ function renderBetsHistory() {
     <div class="player-line">
       <div class="avatar">${p.emoji}</div>
       <div class="name">${esc(p.name)} → ${esc(pickLabel)}${exactTxt}
-        <div class="stats" style="font-size:12px;color:var(--muted)">${esc(m.teamA)} – ${esc(m.teamB)} · mise ${b.stake} XP</div>
+        <div class="stats" style="font-size:12px;color:var(--muted)">${compOf(m).emoji} ${esc(m.teamA)} – ${esc(m.teamB)} · mise ${b.stake} XP</div>
       </div>
       <div style="font-size:13px;font-weight:600">${status}</div>
     </div>`;
@@ -1045,6 +1139,8 @@ function renderAll() {
   renderAdminUI();
   renderMe();
   renderPlayers();
+  renderCompOptions();
+  renderMatchFilter();
   renderMatches();
   renderBetSelectors();
   renderBetForm();

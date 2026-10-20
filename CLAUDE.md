@@ -58,8 +58,14 @@ Le déploiement est automatique à chaque push sur `main`.
 - Si on repasse en `loading="lazy"`, le scroll vers Contact sera décalé
 
 ### Mini appli PRONO'XP (pronos/)
-- Jeu de paris en XP (points virtuels, pas d'argent) sur la Coupe du Monde 2026, pour Jules (fils de Fabrice) et ses copains
+- Jeu de paris en XP (points virtuels, pas d'argent) pour Jules (fils de Fabrice) et ses copains
 - URL : `/pronos/` — indépendante du site festival
+- Plusieurs compétitions : Coupe du Monde, Ligue 1, Ligue des Champions, Ligue des Nations.
+  La liste vit dans la constante `COMPETITIONS` de `pronos/index.html` : ajouter une entrée
+  suffit, les menus, filtres et badges suivent. Chaque compétition a ses propres phases
+  (journées pour la Ligue 1, phase de ligue et barrages pour la C1…).
+  Les matchs enregistrés avant cette évolution n'ont pas de champ `competition` : `compOf()`
+  les rattache à la Coupe du Monde — ne pas retirer ce repli, l'état partagé en contient.
 - Mode admin protégé par code (Jules) : gestion des matchs, résultats, remise à zéro
 - Synchro multi-appareils via `api/pronos.js` + Vercel Blob (store `pronoxp`, fichier `pronoxp/state.json`, variable `BLOB_READ_WRITE_TOKEN`)
 - Sans base configurée : l'API répond 503 et l'appli fonctionne en mode local (localStorage)
