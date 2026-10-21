@@ -417,6 +417,7 @@
         <button class="btn secondary" style="margin-top:8px" onclick="changePin()">🔑 Changer le code admin</button>
       </div>
       <p class="hint" id="gestion-hint" style="margin:0">🔑 La remise à zéro est réservée à <b>Jules</b> (mode admin, bouton en haut de page).</p>
+      <p class="hint" style="margin:10px 0 0;font-size:12px">Version de l'appli : <b id="app-version">—</b></p>
     </div>
   </section>
 
@@ -441,6 +442,10 @@
    PRONO'XP — mini appli de paris en XP entre copains
    Données 100 % locales (localStorage), aucun serveur.
    ========================================================= */
+// Affichée dans l'onglet Classement › Gestion. Sert à vérifier d'un coup d'œil
+// qu'un téléphone a bien la dernière version et pas une page gardée en cache.
+const VERSION = '21/10/2026 — compétitions + XP ajustables';
+
 const STORAGE_KEY = 'pronoxp-cdm2026';
 const START_XP = 1000;
 const MIN_STAKE = 10;
@@ -538,7 +543,11 @@ async function pushState() {
     }
     const j = await r.json();
     if (j.ok) syncV = j.v;
-  } catch (e) { /* hors ligne : réessai à la prochaine action */ }
+  } catch (e) {
+    // Sans ce message, une modification perdue (réseau coupé, veille du
+    // téléphone) disparaissait sans que personne ne s'en aperçoive.
+    toast('Pas enregistré — vérifie ta connexion et recommence.', true);
+  }
 }
 
 async function pollSync() {
@@ -1173,6 +1182,7 @@ function resetAll() {
 
 /* ---------- Render global ---------- */
 function renderAll() {
+  $('app-version').textContent = VERSION;
   renderAdminUI();
   renderMe();
   renderPlayers();
