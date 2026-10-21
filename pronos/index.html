@@ -783,6 +783,23 @@ function addPlayer() {
   toast(`${name} rejoint la partie avec ${START_XP} XP ! 🎉`);
 }
 
+// Renflouer un joueur à sec, corriger une erreur de saisie, repartir d'un
+// compte rond : seul l'admin peut toucher au compteur d'XP.
+function setPlayerXp(id) {
+  if (!requireAdmin()) return;
+  const p = player(id);
+  if (!p) return;
+  const saisie = prompt(`Nouveau total d'XP pour ${p.name} ?\n(actuellement ${p.xp} XP)`, p.xp);
+  if (saisie === null) return;
+  const xp = parseInt(String(saisie).trim(), 10);
+  if (isNaN(xp) || xp < 0) return toast('Entre un nombre d\'XP valide (0 ou plus) !', true);
+  if (xp === p.xp) return toast(`${p.name} a déjà ${xp} XP 🤷`);
+  const avant = p.xp;
+  p.xp = xp;
+  save(); renderAll();
+  toast(`${p.name} : ${avant} → ${xp} XP ✅`);
+}
+
 function removePlayer(id) {
   if (!requireAdmin()) return;
   const p = player(id);
@@ -803,7 +820,8 @@ function renderPlayers() {
       <div class="avatar">${p.emoji}</div>
       <div class="name">${esc(p.name)}</div>
       <div class="xp-badge">${p.xp} XP</div>
-      ${isAdmin ? `<button class="mini" onclick="resetPlayerPin('${p.id}')" title="Réinitialiser le code">🔑</button>
+      ${isAdmin ? `<button class="mini" onclick="setPlayerXp('${p.id}')" title="Ajuster les XP">💰</button>
+      <button class="mini" onclick="resetPlayerPin('${p.id}')" title="Réinitialiser le code">🔑</button>
       <button class="mini" onclick="removePlayer('${p.id}')">✕</button>` : ''}
     </div>`).join('');
 }

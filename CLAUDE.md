@@ -68,7 +68,8 @@ Le déploiement est automatique à chaque push sur `main`.
   (journées pour la Ligue 1, phase de ligue et barrages pour la C1…).
   Les matchs enregistrés avant cette évolution n'ont pas de champ `competition` : `compOf()`
   les rattache à la Coupe du Monde — ne pas retirer ce repli, l'état partagé en contient.
-- Mode admin protégé par code (Jules) : gestion des matchs, résultats, remise à zéro
+- Mode admin protégé par code (Jules) : gestion des matchs, résultats, remise à zéro,
+  ajustement des XP d'un joueur (bouton 💰 dans la liste des joueurs)
 - Synchro multi-appareils via `api/pronos.js` + Vercel Blob (store `pronoxp`, fichier `pronoxp/state.json`, variable `BLOB_READ_WRITE_TOKEN`)
 - Sans base configurée : l'API répond 503 et l'appli fonctionne en mode local (localStorage)
 
